@@ -1047,10 +1047,40 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             THEME_BOOST_UNION_SETTING_SELECT_YES
         );
 
+        // Setting: IDP login.
+        $name = 'theme_boost_union/loginidploginenable';
+        $title = get_string('loginidploginenablesetting', 'theme_boost_union', null, true);
+        $authurl = new core\url('/admin/settings.php', ['section' => 'manageauths']);
+        $description = get_string('loginidploginenablesetting_desc', 'theme_boost_union', ['url' => $authurl->out()], true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
+        $tab->add($setting);
+
         // Setting: IDP login intro.
         $name = 'theme_boost_union/loginidpshowintro';
         $title = get_string('loginidpshowintrosetting', 'theme_boost_union', null, true);
         $description = get_string('loginidpshowintrosetting_desc', 'theme_boost_union', get_string('potentialidps', 'auth'), true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginidpshowintro',
+            'theme_boost_union/loginidploginenable',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
+
+        // Setting: Guest login.
+        $name = 'theme_boost_union/loginguestloginenable';
+        $title = get_string('loginguestloginenablesetting', 'theme_boost_union', null, true);
+        $guestloginurl = new core\url('/admin/settings.php', ['section' => 'optionalsubsystems']);
+        $description = get_string('loginguestloginenablesetting_desc', 'theme_boost_union', ['url' => $guestloginurl->out()], true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
+        $tab->add($setting);
+
+        // Setting: Self registration.
+        $name = 'theme_boost_union/loginselfregistrationenable';
+        $title = get_string('loginselfregistrationenablesetting', 'theme_boost_union', null, true);
+        $registerauthurl = new core\url('/admin/settings.php', ['section' => 'manageauths']);
+        $description = get_string('loginselfregistrationenablesetting_desc', 'theme_boost_union', ['url' => $registerauthurl->out()], true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
         $tab->add($setting);
 

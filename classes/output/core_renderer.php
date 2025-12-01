@@ -614,13 +614,38 @@ class core_renderer extends \theme_boost\output\core_renderer {
             $context->showlocalloginintro = true;
         }
 
+        // Check if the IDP login is enabled.
+        $loginidploginenablesetting = get_config('theme_boost_union', 'loginidploginenable');
+        $showidplogin = ($loginidploginenablesetting != false) ? $loginidploginenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+        if ($showidplogin == THEME_BOOST_UNION_SETTING_SELECT_NO) {
+            // Hide identity providers if IDP login is disabled.
+            $context->hasidentityproviders = false;
+            $context->identityproviders = [];
+        }
+
         // Check if the IDP login intro is enabled.
         $loginidpshowintrosetting = get_config('theme_boost_union', 'loginidpshowintro');
         $showidploginintro = ($loginidpshowintrosetting != false) ?
                 $loginidpshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
-        if ($showidploginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+        if ($showidploginintro == THEME_BOOST_UNION_SETTING_SELECT_YES && $showidplogin == THEME_BOOST_UNION_SETTING_SELECT_YES) {
             // Add marker to show the IDP login intro to template context.
             $context->showidploginintro = true;
+        }
+
+        // Check if guest login is enabled.
+        $loginguestloginenablesetting = get_config('theme_boost_union', 'loginguestloginenable');
+        $showguestlogin = ($loginguestloginenablesetting != false) ? $loginguestloginenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+        if ($showguestlogin == THEME_BOOST_UNION_SETTING_SELECT_NO) {
+            // Hide guest login if disabled.
+            $context->canloginasguest = false;
+        }
+
+        // Check if self registration is enabled.
+        $loginselfregistrationenablesetting = get_config('theme_boost_union', 'loginselfregistrationenable');
+        $showselfregistration = ($loginselfregistrationenablesetting != false) ? $loginselfregistrationenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+        if ($showselfregistration == THEME_BOOST_UNION_SETTING_SELECT_NO) {
+            // Hide self registration if disabled.
+            $context->cansignup = false;
         }
 
         return $this->render_from_template('core/loginform', $context);
