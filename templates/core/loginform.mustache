@@ -1,24 +1,19 @@
 {{!
     This file is part of Moodle - http://moodle.org/
-
     Moodle is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
-
     Moodle is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-
     You should have received a copy of the GNU General Public License
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
     @template core/loginform
-
     Moodle template for the login page.
-
     Context variables required for this template:
     * autofocusform: Auto focus on form ?,
     * canloginasguest - Is guest login allowed?,
@@ -44,69 +39,11 @@
     * showlocallogin - Should the local login form be shown?
     * showlocalloginintro - Should the local login intro be shown?
     * showidploginintro - Should the IDP login intro be shown?
-
-    Example context (json):
-    {
-        "autofocusform": false,
-        "canloginasguest": "1",
-        "canloginbyemail": false,
-        "cansignup": true,
-        "showloginform": true,
-        "cookieshelpicon": {
-            "heading": "Cookies must be enabled in your browser",
-            "text": "<div class=\"no-overflow\">Two cookies are used on this site. Both died..</div>",
-            "icon": {
-                "attributes": [
-                    {
-                        "name": "class",
-                        "value": ""
-                    },
-                    {
-                        "name": "alt",
-                        "value": "Help with Cookies must be enabled in your browser"
-                    },
-                    {
-                        "name": "title",
-                        "value": "Help with Cookies must be enabled in your browser"
-                    },
-                    {
-                        "name": "src",
-                        "value": "http://localhost/stable_master/theme/image.php?theme=boost&component=core&image=help"
-                    }
-                ]
-            },
-            "linktext": null,
-            "title": "Help with Cookies must be enabled in your browser",
-            "url": "http://localhost/stable_master/help.php?component=core&identifier=cookiesenabled&lang=en",
-            "ltr": true
-        },
-        "error": "",
-        "info": "",
-        "forgotpasswordurl": "http://localhost/stable_master/login/forgot_password.php",
-        "hasidentityproviders": false,
-        "hasinstructions": true,
-        "identityproviders": [],
-        "instructions": "For full access to this site, you first need to create an account.",
-        "instructionsformat": "1",
-        "loginurl": "http://localhost/stable_master/login/index.php",
-        "signupurl": "http://localhost/stable_master/login/signup.php",
-        "cookieshelpiconformatted": "",
-        "errorformatted": "",
-        "logourl": false,
-        "sitename": "Beer & Chips",
-        "logintoken": "randomstring",
-        "maintenance": "For full access to this site, you need to login in as an admin.",
-        "languagemenu": "Choose language",
-        "togglepassword": true,
-        "smallscreensonly": true,
-        "showlocallogin": true,
-        "showlocalloginintro": true,
-        "showidploginintro": true
-    }
+    * loginlayout - Layout type: 'vertical' or 'tabs'
+    * logintabs - Array of tab objects when layout is 'tabs'
 }}
 {{!
     This template is a modified version of core/loginform
-
     Modifications compared to the original template:
     * Add btn-secondary class to identityprovider login buttons.
     * Added the possibility to hide the local login form (with Boost Union).
@@ -114,6 +51,7 @@
     * Added the possibility to hide the IDP login intro.
     * Added the possibility to show a local login intro.
     * Added the possibility to change the login method order by adding wrapper divs around each login method.
+    * Added tabbed layout option for login methods.
 }}
 
 <div class="loginform">
@@ -137,10 +75,26 @@
     {{#info}}
         <div class="alert alert-info" id="logininfomessage" role="status">{{info}}</div>
     {{/info}}
-    <div id="theme_boost_union-loginorder">
+
+    {{#logintabs}}
+    {{! Render tabs navigation if tabs layout is enabled }}
+    <ul class="nav nav-tabs mb-4" id="login-tabs" role="tablist">
+        {{#tabs}}
+        <li class="nav-item" role="presentation">
+            <a class="nav-link {{#active}}active{{/active}}" id="{{id}}-tab" data-toggle="tab" href="#{{id}}" role="tab" aria-controls="{{id}}" {{#active}}aria-selected="true"{{/active}}{{^active}}aria-selected="false" tabindex="-1"{{/active}}>{{displayname}}</a>
+        </li>
+        {{/tabs}}
+    </ul>
+    <div class="tab-content mb-4" id="login-tabs-content">
+    {{/logintabs}}
+    {{^logintabs}}
+    <div id="theme_boost_union-loginorder" class="login-layout-vertical">
+    {{/logintabs}}
     {{#showlocallogin}}
-    <div id="theme_boost_union-loginorder-local" class="theme_boost_union-loginmethod">
+    <div {{#logintabs}}id="login-tab-local"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-local"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetablocal}} show active{{/activetablocal}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-local-tab"{{/logintabs}}>
+    {{^logintabs}}
     <div class="login-divider"></div>
+    {{/logintabs}}
     {{#showlocalloginintro}}
     <h2 class="login-heading">{{#str}} loginlocalintro, theme_boost_union {{/str}}</h2>
     {{/showlocalloginintro}}
@@ -186,8 +140,10 @@
     </div>
     {{/showlocallogin}}
     {{#hasidentityproviders}}
-    <div id="theme_boost_union-loginorder-idp" class="theme_boost_union-loginmethod">
+    <div {{#logintabs}}id="login-tab-idp"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-idp"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabidp}} show active{{/activetabidp}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-idp-tab"{{/logintabs}}>
+        {{^logintabs}}
         <div class="login-divider"></div>
+        {{/logintabs}}
         <div class="login-identityproviders">
             {{#showidploginintro}}
             <h2 class="login-heading">{{#str}} potentialidps, auth {{/str}}</h2>
@@ -203,9 +159,11 @@
         </div>
     </div>
     {{/hasidentityproviders}}
-    <div id="theme_boost_union-loginorder-firsttimesignup" class="theme_boost_union-loginmethod">
+    <div {{#logintabs}}id="login-tab-signup"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-firsttimesignup"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabsignup}} show active{{/activetabsignup}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-signup-tab"{{/logintabs}}>
     {{#hasinstructions}}
+        {{^logintabs}}
         <div class="login-divider"></div>
+        {{/logintabs}}
         <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
             <h2 class="login-heading">{{#str}}firsttime{{/str}}</h2>
             {{{instructions}}}
@@ -218,8 +176,10 @@
     {{/cansignup}}
     </div>
     {{#canloginasguest}}
-    <div id="theme_boost_union-loginorder-guest" class="theme_boost_union-loginmethod">
+    <div {{#logintabs}}id="login-tab-guest"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-guest"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabguest}} show active{{/activetabguest}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-guest-tab"{{/logintabs}}>
+        {{^logintabs}}
         <div class="login-divider"></div>
+        {{/logintabs}}
         <h2 class="login-heading">{{#str}}someallowguest{{/str}}</h2>
         <form action="{{loginurl}}" method="post" id="guestlogin">
             <input type="hidden" name="logintoken" value="{{logintoken}}">
@@ -229,8 +189,13 @@
         </form>
     </div>
     {{/canloginasguest}}
+    {{^logintabs}}
     </div>
     <div class="login-divider"></div>
+    {{/logintabs}}
+    {{#logintabs}}
+    </div>
+    {{/logintabs}}
     <div class="d-flex">
         {{#languagemenu}}
             <div class="login-languagemenu">
@@ -299,4 +264,52 @@
             Submit.init("loginguestbtn");
         {{/canloginasguest}}
     });
+    {{#logintabs}}
+    require(['jquery'], function($) {
+        // Wait for Bootstrap to be available, then initialize tabs.
+        function whenBootstrapIsAvailable(callback) {
+            if (typeof $().tab === 'function') {
+                callback();
+            } else {
+                setTimeout(function() {
+                    whenBootstrapIsAvailable(callback);
+                }, 100);
+            }
+        }
+        
+        $(document).ready(function() {
+            whenBootstrapIsAvailable(function() {
+                var $tabs = $('#login-tabs a[data-toggle="tab"]');
+                var $tabPanes = $('#login-tabs-content .tab-pane');
+                
+                // Check if tabs and panes exist.
+                if ($tabs.length === 0 || $tabPanes.length === 0) {
+                    return;
+                }
+                
+                // Ensure only the first tab pane is visible initially.
+                $tabPanes.removeClass('show active');
+                var $firstActiveTab = $tabs.filter('.active').first();
+                if ($firstActiveTab.length > 0) {
+                    var firstTargetId = $firstActiveTab.attr('href');
+                    $(firstTargetId).addClass('show active');
+                } else {
+                    // If no active tab link, activate the first one.
+                    var $firstTab = $tabs.first();
+                    if ($firstTab.length > 0) {
+                        $firstTab.addClass('active').attr('aria-selected', 'true');
+                        var firstTargetId = $firstTab.attr('href');
+                        $(firstTargetId).addClass('show active');
+                    }
+                }
+                
+                // Handle tab clicks using Bootstrap's tab method.
+                $tabs.on('click', function (e) {
+                    e.preventDefault();
+                    $(this).tab('show');
+                });
+            });
+        });
+    });
+    {{/logintabs}}
 {{/js}}
