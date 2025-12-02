@@ -345,6 +345,12 @@ $string['loginidploginenablesetting_desc'] = 'With this setting, you control if 
 // ... ... Setting: IDP login intro.
 $string['loginidpshowintrosetting'] = 'IDP login intro';
 $string['loginidpshowintrosetting_desc'] = 'With this setting, you control if the <em>\'{$a}\'</em> intro is shown above the IDP login buttons or not. By default, the intro is shown and users will be quickly informed what the IDP buttons are about. If you disable this setting, the IDP intro is hidden. This allows you to provide a clean user login interface if you just use external identity providers like OAuth2 or OIDC.';
+// ... Section: Login layout.
+$string['loginlayoutheading'] = 'Login layout';
+$string['loginlayoutsetting'] = 'Login layout';
+$string['loginlayoutsetting_desc'] = 'With this setting, you control how the login methods are displayed on the login page. You can choose between a vertical layout (all login methods displayed one below the other) or a tabbed layout (login methods displayed in tabs next to each other).';
+$string['loginlayoutvertical'] = 'Vertical (one below the other)';
+$string['loginlayouttabs'] = 'Tabs (next to each other)';
 // ... Section: Login order.
 $string['loginorderheading'] = 'Login order';
 $string['loginorderheading_desc'] = 'With these settings, you control the order of the login methods in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login methods and login form elements which are disabled in Moodle.';

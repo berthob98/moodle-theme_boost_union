@@ -648,6 +648,70 @@ class core_renderer extends \theme_boost\output\core_renderer {
             $context->cansignup = false;
         }
 
+        // Check login layout setting.
+        $loginlayoutsetting = get_config('theme_boost_union', 'loginlayout');
+        $loginlayout = ($loginlayoutsetting != false) ? $loginlayoutsetting : 'vertical';
+        $context->loginlayout = $loginlayout;
+
+        // If tabs layout is enabled, prepare tab structure.
+        if ($loginlayout == 'tabs') {
+            $tabs = [];
+            $firsttab = true;
+
+            // Tab: Local login.
+            if (!empty($context->showlocallogin)) {
+                $tabs[] = (object)[
+                    'id' => 'login-tab-local',
+                    'name' => 'local',
+                    'displayname' => get_string('loginorderlocalsetting', 'theme_boost_union'),
+                    'active' => $firsttab,
+                    'content' => 'local'
+                ];
+                $context->activetablocal = $firsttab;
+                $firsttab = false;
+            }
+
+            // Tab: IDP login.
+            if (!empty($context->hasidentityproviders) && !empty($context->identityproviders)) {
+                $tabs[] = (object)[
+                    'id' => 'login-tab-idp',
+                    'name' => 'idp',
+                    'displayname' => get_string('loginorderidpsetting', 'theme_boost_union'),
+                    'active' => $firsttab,
+                    'content' => 'idp'
+                ];
+                $context->activetabidp = $firsttab;
+                $firsttab = false;
+            }
+
+            // Tab: Self registration.
+            if (!empty($context->cansignup) || !empty($context->hasinstructions)) {
+                $tabs[] = (object)[
+                    'id' => 'login-tab-signup',
+                    'name' => 'signup',
+                    'displayname' => get_string('loginorderfirsttimesignupsetting', 'theme_boost_union'),
+                    'active' => $firsttab,
+                    'content' => 'signup'
+                ];
+                $context->activetabsignup = $firsttab;
+                $firsttab = false;
+            }
+
+            // Tab: Guest login.
+            if (!empty($context->canloginasguest)) {
+                $tabs[] = (object)[
+                    'id' => 'login-tab-guest',
+                    'name' => 'guest',
+                    'displayname' => get_string('loginorderguestsetting', 'theme_boost_union'),
+                    'active' => $firsttab,
+                    'content' => 'guest'
+                ];
+                $context->activetabguest = $firsttab;
+            }
+
+            $context->logintabs = (object)['tabs' => $tabs];
+        }
+
         return $this->render_from_template('core/loginform', $context);
     }
 
