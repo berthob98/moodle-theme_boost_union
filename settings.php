@@ -1069,6 +1069,19 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             THEME_BOOST_UNION_SETTING_SELECT_YES
         );
 
+        // Setting: Local login intro text.
+        $name = 'theme_boost_union/loginlocalintrotext';
+        $title = get_string('loginlocalintrotextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginlocalintrotextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginlocalintrotext',
+            'theme_boost_union/loginlocalshowintro',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
+
         // Setting: IDP login.
         $name = 'theme_boost_union/loginidploginenable';
         $title = get_string('loginidploginenablesetting', 'theme_boost_union', null, true);
@@ -1090,6 +1103,19 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             THEME_BOOST_UNION_SETTING_SELECT_YES
         );
 
+        // Setting: IDP login intro text.
+        $name = 'theme_boost_union/loginidpintrotext';
+        $title = get_string('loginidpintrotextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginidpintrotextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginidpintrotext',
+            'theme_boost_union/loginidpshowintro',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
+
         // Setting: Guest login.
         $name = 'theme_boost_union/loginguestloginenable';
         $title = get_string('loginguestloginenablesetting', 'theme_boost_union', null, true);
@@ -1098,6 +1124,32 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
         $tab->add($setting);
 
+        // Setting: Guest login intro.
+        $name = 'theme_boost_union/loginguestshowintro';
+        $title = get_string('loginguestshowintrosetting', 'theme_boost_union', null, true);
+        $description = get_string('loginguestshowintrosetting_desc', 'theme_boost_union', get_string('someallowguest', 'core'), true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginguestshowintro',
+            'theme_boost_union/loginguestloginenable',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
+
+        // Setting: Guest login intro text.
+        $name = 'theme_boost_union/loginguestintrotext';
+        $title = get_string('loginguestintrotextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginguestintrotextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginguestintrotext',
+            'theme_boost_union/loginguestshowintro',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
+
         // Setting: Self registration.
         $name = 'theme_boost_union/loginselfregistrationenable';
         $title = get_string('loginselfregistrationenablesetting', 'theme_boost_union', null, true);
@@ -1105,6 +1157,32 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $description = get_string('loginselfregistrationenablesetting_desc', 'theme_boost_union', ['url' => $registerauthurl->out()], true);
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
         $tab->add($setting);
+
+        // Setting: Self registration intro.
+        $name = 'theme_boost_union/loginselfregistrationshowintro';
+        $title = get_string('loginselfregistrationshowintrosetting', 'theme_boost_union', null, true);
+        $description = get_string('loginselfregistrationshowintrosetting_desc', 'theme_boost_union', get_string('firsttime', 'core'), true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginselfregistrationshowintro',
+            'theme_boost_union/loginselfregistrationenable',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
+
+        // Setting: Self registration intro text.
+        $name = 'theme_boost_union/loginselfregistrationintrotext';
+        $title = get_string('loginselfregistrationintrotextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginselfregistrationintrotextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginselfregistrationintrotext',
+            'theme_boost_union/loginselfregistrationshowintro',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
 
         // Create login layout heading.
         $name = 'theme_boost_union/loginlayoutheading';

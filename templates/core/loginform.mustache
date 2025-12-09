@@ -96,7 +96,7 @@
     <div class="login-divider"></div>
     {{/logintabs}}
     {{#showlocalloginintro}}
-    <h2 class="login-heading">{{#str}} loginlocalintro, theme_boost_union {{/str}}</h2>
+    <h2 class="login-heading">{{#localloginintrotext}}{{{localloginintrotext}}}{{/localloginintrotext}}{{^localloginintrotext}}{{#str}} loginlocalintro, theme_boost_union {{/str}}{{/localloginintrotext}}</h2>
     {{/showlocalloginintro}}
         <form class="login-form" action="{{loginurl}}" method="post" id="login">
             <input id="anchor" type="hidden" name="anchor" value="">
@@ -146,7 +146,7 @@
         {{/logintabs}}
         <div class="login-identityproviders">
             {{#showidploginintro}}
-            <h2 class="login-heading">{{#str}} potentialidps, auth {{/str}}</h2>
+            <h2 class="login-heading">{{#idploginintrotext}}{{{idploginintrotext}}}{{/idploginintrotext}}{{^idploginintrotext}}{{#str}} potentialidps, auth {{/str}}{{/idploginintrotext}}</h2>
             {{/showidploginintro}}
             {{#identityproviders}}
                 <a class="btn login-identityprovider-btn btn-block btn-secondary" href="{{url}}">
@@ -165,9 +165,21 @@
         <div class="login-divider"></div>
         {{/logintabs}}
         <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
-            <h2 class="login-heading">{{#str}}firsttime{{/str}}</h2>
+            {{#showselfregistrationloginintro}}
+            <h2 class="login-heading">{{#selfregistrationloginintrotext}}{{{selfregistrationloginintrotext}}}{{/selfregistrationloginintrotext}}{{^selfregistrationloginintrotext}}{{#str}}firsttime{{/str}}{{/selfregistrationloginintrotext}}</h2>
+            {{/showselfregistrationloginintro}}
             {{{instructions}}}
         </div>
+    {{/hasinstructions}}
+    {{^hasinstructions}}
+    {{#showselfregistrationloginintro}}
+        {{^logintabs}}
+        <div class="login-divider"></div>
+        {{/logintabs}}
+        <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
+            <h2 class="login-heading">{{#selfregistrationloginintrotext}}{{{selfregistrationloginintrotext}}}{{/selfregistrationloginintrotext}}{{^selfregistrationloginintrotext}}{{#str}}firsttime{{/str}}{{/selfregistrationloginintrotext}}</h2>
+        </div>
+    {{/showselfregistrationloginintro}}
     {{/hasinstructions}}
     {{#cansignup}}
         <div class="login-signup">
@@ -180,7 +192,9 @@
         {{^logintabs}}
         <div class="login-divider"></div>
         {{/logintabs}}
-        <h2 class="login-heading">{{#str}}someallowguest{{/str}}</h2>
+        {{#showguestloginintro}}
+        <h2 class="login-heading">{{#guestloginintrotext}}{{{guestloginintrotext}}}{{/guestloginintrotext}}{{^guestloginintrotext}}{{#str}}someallowguest{{/str}}{{/guestloginintrotext}}</h2>
+        {{/showguestloginintro}}
         <form action="{{loginurl}}" method="post" id="guestlogin">
             <input type="hidden" name="logintoken" value="{{logintoken}}">
             <input type="hidden" name="username" value="guest" />
