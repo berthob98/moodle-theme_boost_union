@@ -612,6 +612,11 @@ class core_renderer extends \theme_boost\output\core_renderer {
         if ($showlocalloginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
             // Add marker to show the local login intro to template context.
             $context->showlocalloginintro = true;
+            // Check if custom intro text is set.
+            $loginlocalintrotext = get_config('theme_boost_union', 'loginlocalintrotext');
+            if (!empty($loginlocalintrotext)) {
+                $context->localloginintrotext = format_string($loginlocalintrotext, true, ['context' => context_system::instance()]);
+            }
         }
 
         // Check if the IDP login is enabled.
@@ -630,6 +635,11 @@ class core_renderer extends \theme_boost\output\core_renderer {
         if ($showidploginintro == THEME_BOOST_UNION_SETTING_SELECT_YES && $showidplogin == THEME_BOOST_UNION_SETTING_SELECT_YES) {
             // Add marker to show the IDP login intro to template context.
             $context->showidploginintro = true;
+            // Check if custom intro text is set.
+            $loginidpintrotext = get_config('theme_boost_union', 'loginidpintrotext');
+            if (!empty($loginidpintrotext)) {
+                $context->idploginintrotext = format_string($loginidpintrotext, true, ['context' => context_system::instance()]);
+            }
         }
 
         // Check if guest login is enabled.
@@ -638,6 +648,20 @@ class core_renderer extends \theme_boost\output\core_renderer {
         if ($showguestlogin == THEME_BOOST_UNION_SETTING_SELECT_NO) {
             // Hide guest login if disabled.
             $context->canloginasguest = false;
+        } else {
+            // Check if the guest login intro is enabled.
+            $loginguestshowintrosetting = get_config('theme_boost_union', 'loginguestshowintro');
+            $showguestloginintro = ($loginguestshowintrosetting != false) ?
+                $loginguestshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_NO;
+            if ($showguestloginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                // Add marker to show the guest login intro to template context.
+                $context->showguestloginintro = true;
+                // Check if custom intro text is set.
+                $loginguestintrotext = get_config('theme_boost_union', 'loginguestintrotext');
+                if (!empty($loginguestintrotext)) {
+                    $context->guestloginintrotext = format_string($loginguestintrotext, true, ['context' => context_system::instance()]);
+                }
+            }
         }
 
         // Check if self registration is enabled.
@@ -646,6 +670,20 @@ class core_renderer extends \theme_boost\output\core_renderer {
         if ($showselfregistration == THEME_BOOST_UNION_SETTING_SELECT_NO) {
             // Hide self registration if disabled.
             $context->cansignup = false;
+        } else {
+            // Check if the self registration intro is enabled.
+            $loginselfregistrationshowintrosetting = get_config('theme_boost_union', 'loginselfregistrationshowintro');
+            $showselfregistrationloginintro = ($loginselfregistrationshowintrosetting != false) ?
+                $loginselfregistrationshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_NO;
+            if ($showselfregistrationloginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                // Add marker to show the self registration intro to template context.
+                $context->showselfregistrationloginintro = true;
+                // Check if custom intro text is set.
+                $loginselfregistrationintrotext = get_config('theme_boost_union', 'loginselfregistrationintrotext');
+                if (!empty($loginselfregistrationintrotext)) {
+                    $context->selfregistrationloginintrotext = format_string($loginselfregistrationintrotext, true, ['context' => context_system::instance()]);
+                }
+            }
         }
 
         // Check login layout setting.
