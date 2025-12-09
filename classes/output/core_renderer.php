@@ -691,60 +691,105 @@ class core_renderer extends \theme_boost\output\core_renderer {
         $loginlayout = ($loginlayoutsetting != false) ? $loginlayoutsetting : 'vertical';
         $context->loginlayout = $loginlayout;
 
+        // If accordion layout is enabled, set marker.
+        if ($loginlayout == 'accordion') {
+            $context->loginaccordion = true;
+        }
+
         // If tabs layout is enabled, prepare tab structure.
         if ($loginlayout == 'tabs') {
             $tabs = [];
-            $firsttab = true;
 
             // Tab: Local login.
             if (!empty($context->showlocallogin)) {
+                $order = get_config('theme_boost_union', 'loginorderlocal');
+                if ($order === false) {
+                    $order = 1; // Default order.
+                }
                 $tabs[] = (object)[
                     'id' => 'login-tab-local',
                     'name' => 'local',
                     'displayname' => get_string('loginorderlocalsetting', 'theme_boost_union'),
-                    'active' => $firsttab,
+                    'order' => $order,
                     'content' => 'local'
                 ];
-                $context->activetablocal = $firsttab;
-                $firsttab = false;
             }
 
             // Tab: IDP login.
             if (!empty($context->hasidentityproviders) && !empty($context->identityproviders)) {
+                $order = get_config('theme_boost_union', 'loginorderidp');
+                if ($order === false) {
+                    $order = 2; // Default order.
+                }
                 $tabs[] = (object)[
                     'id' => 'login-tab-idp',
                     'name' => 'idp',
                     'displayname' => get_string('loginorderidpsetting', 'theme_boost_union'),
-                    'active' => $firsttab,
+                    'order' => $order,
                     'content' => 'idp'
                 ];
-                $context->activetabidp = $firsttab;
-                $firsttab = false;
             }
 
             // Tab: Self registration.
-            if (!empty($context->cansignup) || !empty($context->hasinstructions)) {
+            // Only show if self registration is enabled in theme settings AND (signup is allowed OR instructions exist).
+            $loginselfregistrationenablesetting = get_config('theme_boost_union', 'loginselfregistrationenable');
+            $showselfregistration = ($loginselfregistrationenablesetting != false) ? $loginselfregistrationenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+            if ($showselfregistration == THEME_BOOST_UNION_SETTING_SELECT_YES && (!empty($context->cansignup) || !empty($context->hasinstructions))) {
+                $order = get_config('theme_boost_union', 'loginorderfirsttimesignup');
+                if ($order === false) {
+                    $order = 3; // Default order.
+                }
                 $tabs[] = (object)[
                     'id' => 'login-tab-signup',
                     'name' => 'signup',
                     'displayname' => get_string('loginorderfirsttimesignupsetting', 'theme_boost_union'),
-                    'active' => $firsttab,
+                    'order' => $order,
                     'content' => 'signup'
                 ];
-                $context->activetabsignup = $firsttab;
-                $firsttab = false;
             }
 
             // Tab: Guest login.
             if (!empty($context->canloginasguest)) {
+                $order = get_config('theme_boost_union', 'loginorderguest');
+                if ($order === false) {
+                    $order = 4; // Default order.
+                }
                 $tabs[] = (object)[
                     'id' => 'login-tab-guest',
                     'name' => 'guest',
                     'displayname' => get_string('loginorderguestsetting', 'theme_boost_union'),
-                    'active' => $firsttab,
+                    'order' => $order,
                     'content' => 'guest'
                 ];
-                $context->activetabguest = $firsttab;
+            }
+
+            // Sort tabs by order setting.
+            usort($tabs, function($a, $b) {
+                return $a->order <=> $b->order;
+            });
+
+            // Set the first tab as active and update context flags.
+            $firsttab = true;
+            foreach ($tabs as $tab) {
+                $tab->active = $firsttab;
+                if ($firsttab) {
+                    // Set the active flag for the corresponding tab content.
+                    switch ($tab->name) {
+                        case 'local':
+                            $context->activetablocal = true;
+                            break;
+                        case 'idp':
+                            $context->activetabidp = true;
+                            break;
+                        case 'signup':
+                            $context->activetabsignup = true;
+                            break;
+                        case 'guest':
+                            $context->activetabguest = true;
+                            break;
+                    }
+                    $firsttab = false;
+                }
             }
 
             $context->logintabs = (object)['tabs' => $tabs];

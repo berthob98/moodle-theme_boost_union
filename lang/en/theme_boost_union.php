@@ -343,9 +343,10 @@ $string['loginidpintrotextsetting_desc'] = 'With this setting, you can override 
 // ... Section: Login layout.
 $string['loginlayoutheading'] = 'Login layout';
 $string['loginlayoutsetting'] = 'Login layout';
-$string['loginlayoutsetting_desc'] = 'With this setting, you control how the login methods are displayed on the login page. You can choose between a vertical layout (all login methods displayed one below the other) or a tabbed layout (login methods displayed in tabs next to each other).';
+$string['loginlayoutsetting_desc'] = 'With this setting, you control how the login methods are displayed on the login page. You can choose between a vertical layout (all login methods displayed one below the other), a tabbed layout (login methods displayed in tabs next to each other), or an accordion layout (login methods displayed one below the other, but collapsed by default and expandable by clicking on the intro texts).';
 $string['loginlayoutvertical'] = 'Vertical (one below the other)';
 $string['loginlayouttabs'] = 'Tabs (next to each other)';
+$string['loginlayoutaccordion'] = 'Accordion (collapsed, expandable)';
 // ... Section: Login order.
 $string['loginorderheading'] = 'Login order';
 $string['loginorderheading_desc'] = 'With these settings, you control the order of the login methods in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login methods and login form elements which are disabled in Moodle.';

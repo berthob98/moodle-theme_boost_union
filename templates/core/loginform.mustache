@@ -76,8 +76,11 @@
         <div class="alert alert-info" id="logininfomessage" role="status">{{info}}</div>
     {{/info}}
 
+    {{! ==================================================================== }}
+    {{! LAYOUT CONTAINER: Tabs or Vertical/Accordion                        }}
+    {{! ==================================================================== }}
     {{#logintabs}}
-    {{! Render tabs navigation if tabs layout is enabled }}
+    {{! TABS LAYOUT: Navigation and content container }}
     <ul class="nav nav-tabs mb-4" id="login-tabs" role="tablist">
         {{#tabs}}
         <li class="nav-item" role="presentation">
@@ -88,16 +91,49 @@
     <div class="tab-content mb-4" id="login-tabs-content">
     {{/logintabs}}
     {{^logintabs}}
-    <div id="theme_boost_union-loginorder" class="login-layout-vertical">
+    {{! VERTICAL/ACCORDION LAYOUT: Container for vertical or accordion layout }}
+    <div id="theme_boost_union-loginorder" class="login-layout-vertical {{#loginaccordion}}login-layout-accordion accordion{{/loginaccordion}}">
     {{/logintabs}}
+
+    {{! ==================================================================== }}
+    {{! LOGIN METHOD: Local Login (Username/Password)                         }}
+    {{! ==================================================================== }}
     {{#showlocallogin}}
-    <div {{#logintabs}}id="login-tab-local"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-local"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetablocal}} show active{{/activetablocal}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-local-tab"{{/logintabs}}>
-    {{^logintabs}}
-    <div class="login-divider"></div>
-    {{/logintabs}}
-    {{#showlocalloginintro}}
-    <h2 class="login-heading">{{#localloginintrotext}}{{{localloginintrotext}}}{{/localloginintrotext}}{{^localloginintrotext}}{{#str}} loginlocalintro, theme_boost_union {{/str}}{{/localloginintrotext}}</h2>
-    {{/showlocalloginintro}}
+    <div {{#logintabs}}id="login-tab-local"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-local"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetablocal}} show active{{/activetablocal}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-local-tab"{{/logintabs}}>
+
+        {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
+        {{^logintabs}}
+        {{^loginaccordion}}
+        <div class="login-divider"></div>
+        {{/loginaccordion}}
+        {{/logintabs}}
+
+        {{! --- ACCORDION LAYOUT: Card header and collapse structure --- }}
+        {{#loginaccordion}}
+        <div class="card-header" id="accordion-local-header">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#accordion-local-content" aria-expanded="false" aria-controls="accordion-local-content">
+                {{#showlocalloginintro}}
+                <span class="login-heading">{{#localloginintrotext}}{{{localloginintrotext}}}{{/localloginintrotext}}{{^localloginintrotext}}{{#str}} loginlocalintro, theme_boost_union {{/str}}{{/localloginintrotext}}</span>
+                {{/showlocalloginintro}}
+                {{^showlocalloginintro}}
+                <span class="login-heading">{{#str}} loginlocalintro, theme_boost_union {{/str}}</span>
+                {{/showlocalloginintro}}
+            </button>
+            </h2>
+        </div>
+        <div id="accordion-local-content" class="collapse" aria-labelledby="accordion-local-header" data-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+        <div class="card-body">
+        {{/loginaccordion}}
+
+        {{! --- VERTICAL LAYOUT: Intro heading (only for vertical, not accordion) --- }}
+        {{^loginaccordion}}
+        {{#showlocalloginintro}}
+        <h2 class="login-heading">{{#localloginintrotext}}{{{localloginintrotext}}}{{/localloginintrotext}}{{^localloginintrotext}}{{#str}} loginlocalintro, theme_boost_union {{/str}}{{/localloginintrotext}}</h2>
+        {{/showlocalloginintro}}
+        {{/loginaccordion}}
+
+        {{! --- COMMON: Login form (same for all layouts) --- }}
         <form class="login-form" action="{{loginurl}}" method="post" id="login">
             <input id="anchor" type="hidden" name="anchor" value="">
             <script>document.getElementById('anchor').value = location.hash;</script>
@@ -137,17 +173,55 @@
                 <a href="{{forgotpasswordurl}}">{{#str}}forgotaccount{{/str}}</a>
             </div>
         </form>
+
+        {{! --- ACCORDION LAYOUT: Close card-body and collapse --- }}
+        {{#loginaccordion}}
+        </div>
+        </div>
+        {{/loginaccordion}}
     </div>
     {{/showlocallogin}}
+
+    {{! ==================================================================== }}
+    {{! LOGIN METHOD: Identity Providers (OAuth2, SAML, etc.)              }}
+    {{! ==================================================================== }}
     {{#hasidentityproviders}}
-    <div {{#logintabs}}id="login-tab-idp"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-idp"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabidp}} show active{{/activetabidp}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-idp-tab"{{/logintabs}}>
+    <div {{#logintabs}}id="login-tab-idp"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-idp"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabidp}} show active{{/activetabidp}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-idp-tab"{{/logintabs}}>
+
+        {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
         {{^logintabs}}
+        {{^loginaccordion}}
         <div class="login-divider"></div>
+        {{/loginaccordion}}
         {{/logintabs}}
+
+        {{! --- ACCORDION LAYOUT: Card header and collapse structure --- }}
+        {{#loginaccordion}}
+        <div class="card-header" id="accordion-idp-header">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#accordion-idp-content" aria-expanded="false" aria-controls="accordion-idp-content">
+                    {{#showidploginintro}}
+                    <span class="login-heading">{{#idploginintrotext}}{{{idploginintrotext}}}{{/idploginintrotext}}{{^idploginintrotext}}{{#str}} potentialidps, auth {{/str}}{{/idploginintrotext}}</span>
+                    {{/showidploginintro}}
+                    {{^showidploginintro}}
+                    <span class="login-heading">{{#str}} potentialidps, auth {{/str}}</span>
+                    {{/showidploginintro}}
+                </button>
+            </h2>
+        </div>
+        <div id="accordion-idp-content" class="collapse" aria-labelledby="accordion-idp-header" data-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+            <div class="card-body">
+        {{/loginaccordion}}
+
+        {{! --- VERTICAL LAYOUT: Intro heading (only for vertical, not accordion) --- }}
+        {{^loginaccordion}}
+        {{#showidploginintro}}
+        <h2 class="login-heading">{{#idploginintrotext}}{{{idploginintrotext}}}{{/idploginintrotext}}{{^idploginintrotext}}{{#str}} potentialidps, auth {{/str}}{{/idploginintrotext}}</h2>
+        {{/showidploginintro}}
+        {{/loginaccordion}}
+
+        {{! --- COMMON: Identity provider buttons (same for all layouts) --- }}
         <div class="login-identityproviders">
-            {{#showidploginintro}}
-            <h2 class="login-heading">{{#idploginintrotext}}{{{idploginintrotext}}}{{/idploginintrotext}}{{^idploginintrotext}}{{#str}} potentialidps, auth {{/str}}{{/idploginintrotext}}</h2>
-            {{/showidploginintro}}
             {{#identityproviders}}
                 <a class="btn login-identityprovider-btn w-100 btn-secondary" href="{{url}}">
                     {{#iconurl}}
@@ -157,54 +231,140 @@
                 </a>
             {{/identityproviders}}
         </div>
+
+        {{! --- ACCORDION LAYOUT: Close card-body and collapse --- }}
+        {{#loginaccordion}}
+        </div>
+        </div>
+        {{/loginaccordion}}
     </div>
     {{/hasidentityproviders}}
-    <div {{#logintabs}}id="login-tab-signup"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-firsttimesignup"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabsignup}} show active{{/activetabsignup}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-signup-tab"{{/logintabs}}>
-    {{#hasinstructions}}
+
+    {{! ==================================================================== }}
+    {{! LOGIN METHOD: Signup / First Time User                               }}
+    {{! ==================================================================== }}
+    {{#cansignup}}
+    {{! Show signup section if signup is allowed }}
+    <div {{#logintabs}}id="login-tab-signup"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-firsttimesignup"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabsignup}} show active{{/activetabsignup}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-signup-tab"{{/logintabs}}>
+
+        {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
         {{^logintabs}}
+        {{^loginaccordion}}
         <div class="login-divider"></div>
+        {{/loginaccordion}}
         {{/logintabs}}
+
+        {{! --- ACCORDION LAYOUT: Card header and collapse structure --- }}
+        {{#loginaccordion}}
+        <div class="card-header" id="accordion-signup-header">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#accordion-signup-content" aria-expanded="false" aria-controls="accordion-signup-content">
+                {{#showselfregistrationloginintro}}
+                <span class="login-heading">{{#selfregistrationloginintrotext}}{{{selfregistrationloginintrotext}}}{{/selfregistrationloginintrotext}}{{^selfregistrationloginintrotext}}{{#str}}firsttime{{/str}}{{/selfregistrationloginintrotext}}</span>
+                {{/showselfregistrationloginintro}}
+                {{^showselfregistrationloginintro}}
+                <span class="login-heading">{{#str}}firsttime{{/str}}</span>
+                {{/showselfregistrationloginintro}}
+            </button>
+            </h2>
+        </div>
+        <div id="accordion-signup-content" class="collapse" aria-labelledby="accordion-signup-header" data-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+        <div class="card-body">
+        {{/loginaccordion}}
+
+        {{! --- VERTICAL LAYOUT: Instructions and intro (only for vertical, not accordion) --- }}
+    {{#hasinstructions}}
         <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
+            {{^loginaccordion}}
             {{#showselfregistrationloginintro}}
             <h2 class="login-heading">{{#selfregistrationloginintrotext}}{{{selfregistrationloginintrotext}}}{{/selfregistrationloginintrotext}}{{^selfregistrationloginintrotext}}{{#str}}firsttime{{/str}}{{/selfregistrationloginintrotext}}</h2>
             {{/showselfregistrationloginintro}}
+            {{/loginaccordion}}
             {{{instructions}}}
         </div>
     {{/hasinstructions}}
     {{^hasinstructions}}
+    {{^loginaccordion}}
     {{#showselfregistrationloginintro}}
-        {{^logintabs}}
-        <div class="login-divider"></div>
-        {{/logintabs}}
         <div class="login-instructions {{#cansignup}}mb-3{{/cansignup}}">
             <h2 class="login-heading">{{#selfregistrationloginintrotext}}{{{selfregistrationloginintrotext}}}{{/selfregistrationloginintrotext}}{{^selfregistrationloginintrotext}}{{#str}}firsttime{{/str}}{{/selfregistrationloginintrotext}}</h2>
         </div>
     {{/showselfregistrationloginintro}}
+    {{/loginaccordion}}
     {{/hasinstructions}}
-    {{#cansignup}}
+        {{! --- COMMON: Signup button (same for all layouts) --- }}
         <div class="login-signup">
             <a class="btn btn-secondary" href="{{signupurl}}">{{#str}}startsignup{{/str}}</a>
         </div>
-    {{/cansignup}}
+
+        {{! --- ACCORDION LAYOUT: Close card-body and collapse --- }}
+        {{#loginaccordion}}
+        </div>
+        </div>
+        {{/loginaccordion}}
     </div>
+    {{/cansignup}}
+
+    {{! ==================================================================== }}
+    {{! LOGIN METHOD: Guest Login                                           }}
+    {{! ==================================================================== }}
     {{#canloginasguest}}
-    <div {{#logintabs}}id="login-tab-guest"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-guest"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabguest}} show active{{/activetabguest}}{{/logintabs}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-guest-tab"{{/logintabs}}>
+    <div {{#logintabs}}id="login-tab-guest"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-guest"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabguest}} show active{{/activetabguest}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-guest-tab"{{/logintabs}}>
+
+        {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
         {{^logintabs}}
+        {{^loginaccordion}}
         <div class="login-divider"></div>
+        {{/loginaccordion}}
         {{/logintabs}}
+
+        {{! --- ACCORDION LAYOUT: Card header and collapse structure --- }}
+        {{#loginaccordion}}
+        <div class="card-header" id="accordion-guest-header">
+            <h2 class="mb-0">
+                <button class="btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#accordion-guest-content" aria-expanded="false" aria-controls="accordion-guest-content">
+                    {{#showguestloginintro}}
+                    <span class="login-heading">{{#guestloginintrotext}}{{{guestloginintrotext}}}{{/guestloginintrotext}}{{^guestloginintrotext}}{{#str}}someallowguest{{/str}}{{/guestloginintrotext}}</span>
+                    {{/showguestloginintro}}
+                    {{^showguestloginintro}}
+                    <span class="login-heading">{{#str}}someallowguest{{/str}}</span>
+                    {{/showguestloginintro}}
+                </button>
+            </h2>
+        </div>
+        <div id="accordion-guest-content" class="collapse" aria-labelledby="accordion-guest-header" data-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+            <div class="card-body">
+        {{/loginaccordion}}
+
+        {{! --- VERTICAL LAYOUT: Intro heading (only for vertical, not accordion) --- }}
+        {{^loginaccordion}}
         {{#showguestloginintro}}
         <h2 class="login-heading">{{#guestloginintrotext}}{{{guestloginintrotext}}}{{/guestloginintrotext}}{{^guestloginintrotext}}{{#str}}someallowguest{{/str}}{{/guestloginintrotext}}</h2>
         {{/showguestloginintro}}
+        {{/loginaccordion}}
+
+        {{! --- COMMON: Guest login form (same for all layouts) --- }}
         <form action="{{loginurl}}" method="post" id="guestlogin">
             <input type="hidden" name="logintoken" value="{{logintoken}}">
             <input type="hidden" name="username" value="guest" />
             <input type="hidden" name="password" value="guest" />
             <button class="btn btn-secondary" type="submit" id="loginguestbtn">{{#str}}loginguest{{/str}}</button>
         </form>
+
+        {{! --- ACCORDION LAYOUT: Close card-body and collapse --- }}
+        {{#loginaccordion}}
+        </div>
+        </div>
+        {{/loginaccordion}}
     </div>
     {{/canloginasguest}}
+
+    {{! ==================================================================== }}
+    {{! LAYOUT CONTAINER: Close tabs or vertical/accordion container         }}
+    {{! ==================================================================== }}
     {{^logintabs}}
     </div>
+    {{! --- VERTICAL/ACCORDION LAYOUT: Final divider --- }}
     <div class="login-divider"></div>
     {{/logintabs}}
     {{#logintabs}}
@@ -278,6 +438,37 @@
             Submit.init("loginguestbtn");
         {{/canloginasguest}}
     });
+    {{#loginaccordion}}
+    require(['jquery'], function($) {
+        // Wait for Bootstrap to be available, then initialize accordion.
+        function whenBootstrapIsAvailable(callback) {
+            if (typeof $().collapse === 'function') {
+                callback();
+            } else {
+                setTimeout(function() {
+                    whenBootstrapIsAvailable(callback);
+                }, 100);
+            }
+        }
+        
+        $(document).ready(function() {
+            whenBootstrapIsAvailable(function() {
+                // Bootstrap collapse should work automatically with data-toggle="collapse",
+                // but we ensure proper initialization and accordion behavior.
+                $('#theme_boost_union-loginorder .card-header .btn-link').on('click', function() {
+                    var $button = $(this);
+                    var $target = $($button.data('target'));
+                    var $parent = $($target.data('parent'));
+                    
+                    // If this is an accordion (has parent), close other open items.
+                    if ($parent.length > 0) {
+                        $parent.find('.collapse.show').not($target).collapse('hide');
+                    }
+                });
+            });
+        });
+    });
+    {{/loginaccordion}}
     {{#logintabs}}
     require(['jquery'], function($) {
         // Wait for Bootstrap to be available, then initialize tabs.
