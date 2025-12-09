@@ -1197,6 +1197,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $loginlayoutoptions = [
             'vertical' => get_string('loginlayoutvertical', 'theme_boost_union'),
             'tabs' => get_string('loginlayouttabs', 'theme_boost_union'),
+            'accordion' => get_string('loginlayoutaccordion', 'theme_boost_union'),
         ];
         $setting = new admin_setting_configselect($name, $title, $description, 'vertical', $loginlayoutoptions);
         $setting->set_updatedcallback('theme_reset_all_caches');
