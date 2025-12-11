@@ -1928,7 +1928,14 @@ function theme_boost_union_get_scss_login_order($theme) {
                 break;
             case 'firsttimesignup':
                 $loginselfregistrationenablesetting = get_config('theme_boost_union', 'loginselfregistrationenable');
-                $isenabled = ($loginselfregistrationenablesetting == false || $loginselfregistrationenablesetting == THEME_BOOST_UNION_SETTING_SELECT_YES);
+                $showselfregistration = ($loginselfregistrationenablesetting == false || $loginselfregistrationenablesetting == THEME_BOOST_UNION_SETTING_SELECT_YES);
+                // Check if self-registration will actually be rendered.
+                // It requires both the theme setting to be enabled AND registerauth to be set in Moodle core.
+                // registerauth can be set to any authentication plugin name that supports self-registration (e.g., 'email', 'ldap', etc.).
+                // If registerauth is empty or contains only whitespace, self-registration is disabled.
+                global $CFG;
+                $cansignup = !empty(trim($CFG->registerauth ?? ''));
+                $isenabled = $showselfregistration && $cansignup;
                 break;
             case 'guest':
                 $loginguestloginenablesetting = get_config('theme_boost_union', 'loginguestloginenable');
