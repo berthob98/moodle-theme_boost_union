@@ -995,6 +995,15 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $tab->add($setting);
 
+        // Setting: Login container width.
+        $name = 'theme_boost_union/logincontainerwidth';
+        $title = get_string('logincontainerwidthsetting', 'theme_boost_union', null, true);
+        $description = get_string('logincontainerwidthsetting_desc', 'theme_boost_union', null, true);
+        $default = '500px';
+        $setting = new admin_setting_configtext($name, $title, $description, $default, $widthregex, 6);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+
         // Create login providers heading.
         $name = 'theme_boost_union/loginprovidersheading';
         $title = get_string('loginprovidersheading', 'theme_boost_union', null, true);

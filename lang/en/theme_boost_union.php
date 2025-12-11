@@ -317,6 +317,9 @@ $string['loginformpositionsetting_right'] = 'Right-aligned';
 // ... ... Setting: login form transparency.
 $string['loginformtransparencysetting'] = 'Login form transparency';
 $string['loginformtransparencysetting_desc'] = 'With this setting, you can make the login form slightly transparent to let the background image shine through even more.';
+// ... ... Setting: Login container width.
+$string['logincontainerwidthsetting'] = 'Login container width';
+$string['logincontainerwidthsetting_desc'] = 'With this setting, you can override Moodle\'s fixed login container width of 500px. By default, Moodle uses a login container width of 500px on medium and larger screens. You can enter other pixel-based values like 600px, but you can also enter a percentage-based value like 90% or a viewport-width value like 50vw.';
 // ... Section: Login providers.
 $string['loginprovidersheading'] = 'Login providers';
 $string['loginprovidersheading_desc'] = 'Please note: Boost Union has its own login providers settings and does not use the \'{$a->settingname}\' setting from <a href="{$a->url}">Moodle core\'s authentication setting</a>.';

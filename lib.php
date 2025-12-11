@@ -336,6 +336,14 @@ function theme_boost_union_get_pre_scss($theme) {
     if (get_config('theme_boost_union', 'blockdrawerwidth')) {
         $scss .= '$drawer-right-width: ' . get_config('theme_boost_union', 'blockdrawerwidth') . ";\n";
     }
+    // Set variables which are influenced by the logincontainerwidth setting.
+    $logincontainerwidth = get_config('theme_boost_union', 'logincontainerwidth');
+    if ($logincontainerwidth) {
+        $scss .= '$logincontainer-width: ' . $logincontainerwidth . ";\n";
+    } else {
+        // Use default value if setting is not configured.
+        $scss .= '$logincontainer-width: 500px;\n';
+    }
 
     // Set variables which are influenced by the activityiconcolor* settings.
     $purposes = [MOD_PURPOSE_ADMINISTRATION,

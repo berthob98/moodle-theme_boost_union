@@ -332,6 +332,17 @@
     background-color: rgba(255, 255, 255, 0.8);
 }
 
+/*---------------------------------------
+ * Setting: Login container width
+ --------------------------------------*/
+
+/* Override the fixed 500px width from Boost core with the custom width setting. */
+@include media-breakpoint-up(md) {
+    .login-container {
+        width: $logincontainer-width !important; /* stylelint-disable-line declaration-no-important */
+    }
+}
+
 /*=======================================
  * Settings: Look -> Category index / site home
  ======================================*/
