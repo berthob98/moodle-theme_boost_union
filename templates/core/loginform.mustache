@@ -96,10 +96,14 @@
     {{/logintabs}}
 
     {{! ==================================================================== }}
-    {{! LOGIN METHOD: Local Login (Username/Password)                         }}
+    {{! LOGIN METHODS: Render in sorted order for vertical/accordion layout }}
     {{! ==================================================================== }}
+    {{#loginmethods}}
+    {{! Render each login method in the sorted order }}
+    {{#islocal}}
+    {{! LOGIN METHOD: Local Login (Username/Password) }}
     {{#showlocallogin}}
-    <div {{#logintabs}}id="login-tab-local"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-local"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetablocal}} show active{{/activetablocal}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-local-tab"{{/logintabs}}>
+    <div {{#logintabs}}id="login-tab-local"{{/logintabs}}{{^logintabs}}id="{{id}}"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetablocal}} show active{{/activetablocal}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-local-tab"{{/logintabs}}>
 
         {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
         {{^logintabs}}
@@ -181,12 +185,11 @@
         {{/loginaccordion}}
     </div>
     {{/showlocallogin}}
-
-    {{! ==================================================================== }}
-    {{! LOGIN METHOD: Identity Providers (OAuth2, SAML, etc.)              }}
-    {{! ==================================================================== }}
+    {{/islocal}}
+    {{#isidp}}
+    {{! LOGIN METHOD: Identity Providers (OAuth2, SAML, etc.) }}
     {{#hasidentityproviders}}
-    <div {{#logintabs}}id="login-tab-idp"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-idp"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabidp}} show active{{/activetabidp}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-idp-tab"{{/logintabs}}>
+    <div {{#logintabs}}id="login-tab-idp"{{/logintabs}}{{^logintabs}}id="{{id}}"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabidp}} show active{{/activetabidp}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-idp-tab"{{/logintabs}}>
 
         {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
         {{^logintabs}}
@@ -239,13 +242,12 @@
         {{/loginaccordion}}
     </div>
     {{/hasidentityproviders}}
-
-    {{! ==================================================================== }}
-    {{! LOGIN METHOD: Signup / First Time User                               }}
-    {{! ==================================================================== }}
+    {{/isidp}}
+    {{#issignup}}
+    {{! LOGIN METHOD: Signup / First Time User }}
     {{#cansignup}}
     {{! Show signup section if signup is allowed }}
-    <div {{#logintabs}}id="login-tab-signup"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-firsttimesignup"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabsignup}} show active{{/activetabsignup}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-signup-tab"{{/logintabs}}>
+    <div {{#logintabs}}id="login-tab-signup"{{/logintabs}}{{^logintabs}}id="{{id}}"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabsignup}} show active{{/activetabsignup}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-signup-tab"{{/logintabs}}>
 
         {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
         {{^logintabs}}
@@ -304,12 +306,11 @@
         {{/loginaccordion}}
     </div>
     {{/cansignup}}
-
-    {{! ==================================================================== }}
-    {{! LOGIN METHOD: Guest Login                                           }}
-    {{! ==================================================================== }}
+    {{/issignup}}
+    {{#isguest}}
+    {{! LOGIN METHOD: Guest Login }}
     {{#canloginasguest}}
-    <div {{#logintabs}}id="login-tab-guest"{{/logintabs}}{{^logintabs}}id="theme_boost_union-loginorder-guest"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabguest}} show active{{/activetabguest}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-guest-tab"{{/logintabs}}>
+    <div {{#logintabs}}id="login-tab-guest"{{/logintabs}}{{^logintabs}}id="{{id}}"{{/logintabs}} class="theme_boost_union-loginmethod {{#logintabs}}tab-pane fade{{#activetabguest}} show active{{/activetabguest}}{{/logintabs}} {{#loginaccordion}}card{{/loginaccordion}}" {{#logintabs}}role="tabpanel" aria-labelledby="login-tab-guest-tab"{{/logintabs}}>
 
         {{! --- VERTICAL LAYOUT: Divider (only for vertical, not accordion) --- }}
         {{^logintabs}}
@@ -358,6 +359,8 @@
         {{/loginaccordion}}
     </div>
     {{/canloginasguest}}
+    {{/isguest}}
+    {{/loginmethods}}
 
     {{! ==================================================================== }}
     {{! LAYOUT CONTAINER: Close tabs or vertical/accordion container         }}
