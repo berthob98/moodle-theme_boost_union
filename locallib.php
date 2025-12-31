@@ -1851,118 +1851,15 @@ function theme_boost_union_get_scss_login_order($theme) {
     // Get the login methods.
     $loginmethods = theme_boost_union_get_loginpage_methods();
 
-    // If the default orders are unchanged.
-    $unchanged = true;
-    foreach ($loginmethods as $key => $lm) {
-        $setting = get_config('theme_boost_union', 'loginorder' . $lm);
-        if ($setting != $key) {
-            $unchanged = false;
-        }
-    }
-    if ($unchanged == true) {
-        // Hide the first login-divider (as we have added login-dividers to all orderable login methods,
-        // but do not want a divider between the page heading and the first login method).
-        // Only apply this when not in accordion layout (accordion doesn't use dividers).
-        $scss .= '#theme_boost_union-loginorder:not(.accordion) .theme_boost_union-loginmethod:first-of-type .login-divider { display: none; }';
-
-        // Return the SCSS code as we are done.
-        return $scss;
-    }
-
-    // Make the loginform a flexbox for vertical and accordion layouts (tabs use PHP sorting).
-    $scss .= '#theme_boost_union-loginorder { display: flex; flex-direction: column; }';
-
-    // Check which login methods are enabled and build a list with their order settings.
-    $enabledmethods = [];
-    foreach ($loginmethods as $lm) {
-        $isenabled = false;
-        
-        // Check if this login method is enabled based on theme settings.
-        switch ($lm) {
-            case 'local':
-                $loginlocalloginsetting = get_config('theme_boost_union', 'loginlocalloginenable');
-                $isenabled = ($loginlocalloginsetting == false || $loginlocalloginsetting == THEME_BOOST_UNION_SETTING_SELECT_YES);
-                break;
-            case 'idp':
-                $loginidploginenablesetting = get_config('theme_boost_union', 'loginidploginenable');
-                $isenabled = ($loginidploginenablesetting == false || $loginidploginenablesetting == THEME_BOOST_UNION_SETTING_SELECT_YES);
-                // Also check if there are actually identity providers available.
-                // Note: We can't check this in SCSS generation, so we'll assume it's enabled if the setting allows it.
-                break;
-            case 'firsttimesignup':
-                $loginselfregistrationenablesetting = get_config('theme_boost_union', 'loginselfregistrationenable');
-                $showselfregistration = ($loginselfregistrationenablesetting == false || $loginselfregistrationenablesetting == THEME_BOOST_UNION_SETTING_SELECT_YES);
-                // Check if self-registration will actually be rendered.
-                // It requires both the theme setting to be enabled AND registerauth to be set in Moodle core.
-                // registerauth can be set to any authentication plugin name that supports self-registration (e.g., 'email', 'ldap', etc.).
-                // If registerauth is empty or contains only whitespace, self-registration is disabled.
-                global $CFG;
-                $cansignup = !empty(trim($CFG->registerauth ?? ''));
-                $isenabled = $showselfregistration && $cansignup;
-                break;
-            case 'guest':
-                $loginguestloginenablesetting = get_config('theme_boost_union', 'loginguestloginenable');
-                $isenabled = ($loginguestloginenablesetting == false || $loginguestloginenablesetting == THEME_BOOST_UNION_SETTING_SELECT_YES);
-                break;
-        }
-        
-        if ($isenabled) {
-            $setting = get_config('theme_boost_union', 'loginorder' . $lm);
-            if ($setting === false) {
-                // Use default order if not set.
-                $setting = array_search($lm, $loginmethods);
-            }
-            $enabledmethods[] = [
-                'name' => $lm,
-                'order' => $setting
-            ];
-        }
-    }
-    
-    // Sort enabled methods by their order setting.
-    usort($enabledmethods, function($a, $b) {
-        return $a['order'] <=> $b['order'];
-    });
-    
-    // Assign sequential order values (1, 2, 3, ...) to enabled methods.
-    $sequentialorder = 1;
-    $firstmethodname = '';
-    $lastmethodname = '';
-    $maxorder = 0;
-    foreach ($enabledmethods as $method) {
-        $scss .= '#theme_boost_union-loginorder #theme_boost_union-loginorder-' . $method['name'] . ' { order: ' . $sequentialorder . '; }';
-        
-        if ($sequentialorder == 1) {
-            $firstmethodname = $method['name'];
-        }
-        $lastmethodname = $method['name'];
-        $maxorder = $sequentialorder;
-        
-        $sequentialorder++;
-    }
-    
-    // Fix accordion border-radius when flexbox ordering is used.
-    // Since we now use sequential order (1, 2, 3...) for only enabled methods,
-    // we can target the first and last by their IDs.
-    $scss .= '#theme_boost_union-loginorder.accordion .card { border-radius: 0; }';
-    if (!empty($firstmethodname)) {
-        $scss .= '#theme_boost_union-loginorder.accordion #theme_boost_union-loginorder-' . $firstmethodname . ' { border-top-left-radius: 0.25rem; border-top-right-radius: 0.25rem; }';
-    }
-    if (!empty($lastmethodname)) {
-        if ($lastmethodname == $firstmethodname) {
-            // If only one method is enabled, it should have all rounded corners.
-            $scss .= '#theme_boost_union-loginorder.accordion #theme_boost_union-loginorder-' . $lastmethodname . ' { border-bottom-left-radius: 0.25rem; border-bottom-right-radius: 0.25rem; }';
-        } else {
-            $scss .= '#theme_boost_union-loginorder.accordion #theme_boost_union-loginorder-' . $lastmethodname . ' { border-bottom-left-radius: 0.25rem; border-bottom-right-radius: 0.25rem; }';
-        }
-    }
-    
-    // Initialize a variable to detect the very first method (for divider hiding).
-    $veryfirstmethodname = $firstmethodname;
-
-    // Hide the first login-divider - similar to the 'unchanged settings' case, but in this case based on the flexbox orders.
+    // Hide the first login-divider (as we have added login-dividers to all orderable login methods,
+    // but do not want a divider between the page heading and the first login method).
     // Only apply this when not in accordion layout (accordion doesn't use dividers).
-    $scss .= '#theme_boost_union-loginorder:not(.accordion) #theme_boost_union-loginorder-' . $veryfirstmethodname . ' .login-divider { display: none; }';
+    // Since login methods are now rendered in the correct DOM order, we can use :first-of-type.
+    $scss .= '#theme_boost_union-loginorder:not(.accordion) .theme_boost_union-loginmethod:first-of-type .login-divider { display: none; }';
+
+    // Note: Accordion border-radius is handled by Bootstrap's built-in accordion CSS.
+    // Bootstrap's `.accordion > .card:not(:last-of-type)` and `.accordion > .card:not(:first-of-type)`
+    // automatically handle the border-radius for accordion cards, so no custom CSS is needed.
 
     // Apply ordering to tabs layout: tab navigation items and tab panes.
     // Note: Tab navigation items are already sorted in PHP, but we apply ordering to tab panes for consistency.

@@ -322,19 +322,35 @@ $string['logincontainerwidthsetting'] = 'Login container width';
 $string['logincontainerwidthsetting_desc'] = 'With this setting, you can override Moodle\'s fixed login container width of 500px. By default, Moodle uses a login container width of 500px on medium and larger screens. You can enter other pixel-based values like 600px, but you can also enter a percentage-based value like 90% or a viewport-width value like 50vw.';
 // ... Section: Login providers.
 $string['loginprovidersheading'] = 'Login providers';
-$string['loginprovidersheading_desc'] = 'Please note: Boost Union has its own login providers settings and does not use the \'{$a->settingname}\' setting from <a href="{$a->url}">Moodle core\'s authentication setting</a>.';
+$string['loginprovidersheading_desc'] = 'Please note: Boost Union has its own login providers settings that work in addition to Moodle core\'s authentication settings. Some login providers (like Local login) also respect Moodle core settings. Please check the individual provider settings below for details.';
+$string['loginproviderlocalheading'] = 'Login provider: Local';
+$string['loginprovideridpheading'] = 'Login provider: IDP';
+$string['loginproviderguestheading'] = 'Login provider: Guest';
+$string['loginproviderselfregistrationheading'] = 'Login provider: Self registration';
 // ... ... Setting: Local login form.
 $string['loginlocalloginenablesetting'] = 'Local login';
 $string['loginlocalloginenablesetting_desc'] = 'With this setting, you control if the local login form is shown on the login page or not. By default, the local login form is shown and users can login into the site as normal. If you disable this setting, the local login form is hidden. This allows you to just provide login buttons for external identity providers like OAuth2 or OIDC.';
-$string['loginlocalloginenablesetting_note'] = 'Please note: As soon as you hide the local login form, you risk that admins cannot log in anymore with a local account if there is a problem with the external identity provider. The same goes if no other authentication methods than manual authentication are enabled at all.<br />To allow local logins anyway in such cases, the <a href="{$a->url}">side entrance local login page</a> (see below for details) is enabled automatically. Please bookmark this URL as your own safety net.';
+$string['loginlocalloginenablesetting_note'] = 'Please note: The local login form will be hidden if either this setting is disabled OR if the Moodle core setting "Display manual login form" (in Site administration > Plugins > Authentication > Manage authentication) is disabled. As soon as you hide the local login form, you risk that admins cannot log in anymore with a local account if there is a problem with the external identity provider. The same goes if no other authentication methods than manual authentication are enabled at all.<br />To allow local logins anyway in such cases, the <a href="{$a->url}">side entrance local login page</a> (see below for details) is enabled automatically. Please bookmark this URL as your own safety net.';
 $string['loginlocalloginformhead'] = 'Local login';
 $string['loginlocalloginlocalnotdisabled'] = 'There is no need to log in on this side entrance login page here. Please use the <a href="{$a->url}">standard login page</a> for logging in.';
 // ... ... Setting: Local login intro.
 $string['loginlocalshowintrosetting'] = 'Local login intro';
 $string['loginlocalshowintrosetting_desc'] = 'With this setting, you control if a <em>\'{$a}\'</em> intro is shown above the local login form or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand which credentials to use in the local login form, especially if you provide more than one login method or if you have changed the order of the login methods.';
 $string['loginlocalintro'] = 'Login with your Moodle account';
+$string['loginlocalheading'] = 'Local login';
 $string['loginlocalintrotextsetting'] = 'Local login intro text';
 $string['loginlocalintrotextsetting_desc'] = 'With this setting, you can override the default intro text "Login with your Moodle account" with a custom text. Leave this field empty to use the default text.';
+$string['loginlocallogintabtextsetting'] = 'Local login tab text';
+$string['loginlocallogintabtextsetting_desc'] = 'With this setting, you can customize the text displayed in the tab for local login when using the tabs layout.';
+$string['loginidpheading'] = 'IDP login';
+$string['loginidplogintabtextsetting'] = 'IDP login tab text';
+$string['loginidplogintabtextsetting_desc'] = 'With this setting, you can customize the text displayed in the tab for IDP login when using the tabs layout.';
+$string['loginguestheading'] = 'Guest login';
+$string['loginguestlogintabtextsetting'] = 'Guest login tab text';
+$string['loginguestlogintabtextsetting_desc'] = 'With this setting, you can customize the text displayed in the tab for guest login when using the tabs layout.';
+$string['loginselfregistrationheading'] = 'Self registration';
+$string['loginselfregistrationlogintabtextsetting'] = 'Self registration tab text';
+$string['loginselfregistrationlogintabtextsetting_desc'] = 'With this setting, you can customize the text displayed in the tab for self registration when using the tabs layout.';
 // ... ... Setting: IDP login.
 $string['loginidploginenablesetting'] = 'IDP login';
 $string['loginidploginenablesetting_desc'] = 'With this setting, you control if the identity provider (IDP) login buttons are shown on the login page or not. By default, IDP login buttons are shown if identity providers are configured. If you disable this setting, all IDP login buttons are hidden regardless of the authentication plugins configuration.<br /><br /><strong>Core setting:</strong> Identity providers are provided by authentication plugins (e.g. OAuth2, CAS, Shibboleth). You can manage authentication plugins in <a href="{$a->url}">Site administration → Plugins → Authentication → Manage authentication</a>.';
@@ -350,6 +366,11 @@ $string['loginlayoutsetting_desc'] = 'With this setting, you control how the log
 $string['loginlayoutvertical'] = 'Vertical (one below the other)';
 $string['loginlayouttabs'] = 'Tabs (next to each other)';
 $string['loginlayoutaccordion'] = 'Accordion (collapsed, expandable)';
+
+$string['loginbackgroundlayoutsetting'] = 'Login background layout';
+$string['loginbackgroundlayoutsetting_desc'] = 'With this setting, you control how the login form and background image are arranged on the login page. The "Default" option displays the login form on top of the background image (current behavior). The "Split Screen" option displays the login form on the left half of the screen and the background image on the right half of the screen.';
+$string['loginbackgroundlayoutdefault'] = 'Default';
+$string['loginbackgroundlayoutsplitscreen'] = 'Split Screen';
 // ... Section: Login order.
 $string['loginorderheading'] = 'Login order';
 $string['loginorderheading_desc'] = 'With these settings, you control the order of the login methods in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login methods and login form elements which are disabled in Moodle.';
@@ -361,7 +382,7 @@ $string['loginorderfirsttimesignupsetting'] = 'Information for first time visito
 $string['loginorderguestsetting'] = 'Guest login';
 // ... ... Setting: Guest login.
 $string['loginguestloginenablesetting'] = 'Guest login';
-$string['loginguestloginenablesetting_desc'] = 'With this setting, you control if the guest login button is shown on the login page or not. By default, the guest login button is shown if guest access is enabled in Moodle core. If you disable this setting, the guest login button is hidden regardless of the core guest access setting.<br /><br /><strong>Core setting:</strong> Guest access is controlled by the <em>Enable guest access</em> setting in <a href="{$a->url}">Site administration → Advanced features</a> (optionalsubsystems).';
+$string['loginguestloginenablesetting_desc'] = 'With this setting, you control if the guest login button is shown on the login page or not. By default, the guest login button is shown if guest access is enabled in Moodle core. If you disable this setting, the guest login button is hidden regardless of the core guest access setting.<br /><br /><strong>Core setting:</strong> Guest access is controlled by the <em>Enable guest access</em> setting in <a href="{$a->url}">Site administration → Advanced features</a> (optionalsubsystems).<br /><br />Please note: The guest login button will be hidden if either this setting is disabled OR if the Moodle core setting "Guest login button" (in Site administration > Plugins > Authentication > Manage authentication) is disabled.';
 // ... ... Setting: Guest login intro.
 $string['loginguestshowintrosetting'] = 'Guest login intro';
 $string['loginguestshowintrosetting_desc'] = 'With this setting, you control if a <em>\'{$a}\'</em> intro is shown above the guest login button or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand what guest access is about.';
@@ -369,7 +390,7 @@ $string['loginguestintrotextsetting'] = 'Guest login intro text';
 $string['loginguestintrotextsetting_desc'] = 'With this setting, you can override the default intro text "Some courses may allow guest access" with a custom text. Leave this field empty to use the default text.';
 // ... ... Setting: Self registration.
 $string['loginselfregistrationenablesetting'] = 'Self registration';
-$string['loginselfregistrationenablesetting_desc'] = 'With this setting, you control if the self registration button and signup link are shown on the login page or not. By default, self registration is shown if it is enabled in Moodle core. If you disable this setting, self registration is hidden regardless of the core registration setting.<br /><br /><strong>Core setting:</strong> Self registration is controlled by the <em>Self registration</em> setting in <a href="{$a->url}">Site administration → Plugins → Authentication → Manage authentication</a>. You need to enable an authentication plugin that supports self registration (e.g. Email-based self-registration).';
+$string['loginselfregistrationenablesetting_desc'] = 'With this setting, you control if the self registration button and signup link are shown on the login page or not. By default, self registration is shown if it is enabled in Moodle core. If you disable this setting, self registration is hidden regardless of the core registration setting.<br /><br /><strong>Core setting:</strong> Self registration is controlled by the <em>Self registration</em> setting in <a href="{$a->url}">Site administration → Plugins → Authentication → Manage authentication</a>. You need to enable an authentication plugin that supports self registration (e.g. Email-based self-registration).<br /><br />Please note: The self registration button and signup link will be hidden if either this setting is disabled OR if the Moodle core setting "Self registration" (in Site administration > Plugins > Authentication > Manage authentication) is not configured (empty).';
 // ... ... Setting: Self registration intro.
 $string['loginselfregistrationshowintrosetting'] = 'Self registration intro';
 $string['loginselfregistrationshowintrosetting_desc'] = 'With this setting, you control if a <em>\'{$a}\'</em> intro is shown above the self registration section or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand what self registration is about.';

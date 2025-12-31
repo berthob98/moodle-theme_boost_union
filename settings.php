@@ -1004,22 +1004,63 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         $setting->set_updatedcallback('theme_reset_all_caches');
         $tab->add($setting);
 
-        // Create login providers heading.
-        $name = 'theme_boost_union/loginprovidersheading';
-        $title = get_string('loginprovidersheading', 'theme_boost_union', null, true);
-        $notificationurl = new core\url('/admin/settings.php', ['section' => 'manageauths']);
-        $notificationsettingname = get_string('showloginform', 'core_auth');
-        $notification = new \core\output\notification(
-            get_string(
-                'loginprovidersheading_desc',
-                'theme_boost_union',
-                ['settingname' => $notificationsettingname, 'url' => $notificationurl->out()]
-            ),
-            \core\output\notification::NOTIFY_INFO
-        );
-        $notification->set_show_closebutton(false);
-        $description = $OUTPUT->render($notification);
+        // Create login layout heading.
+        $name = 'theme_boost_union/loginlayoutheading';
+        $title = get_string('loginlayoutheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
+        // Setting: Login layout.
+        $name = 'theme_boost_union/loginlayout';
+        $title = get_string('loginlayoutsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginlayoutsetting_desc', 'theme_boost_union', null, true);
+        $loginlayoutoptions = [
+            'vertical' => get_string('loginlayoutvertical', 'theme_boost_union'),
+            'tabs' => get_string('loginlayouttabs', 'theme_boost_union'),
+            'accordion' => get_string('loginlayoutaccordion', 'theme_boost_union'),
+        ];
+        $setting = new admin_setting_configselect($name, $title, $description, 'vertical', $loginlayoutoptions);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+
+        // Setting: Login background layout.
+        $name = 'theme_boost_union/loginbackgroundlayout';
+        $title = get_string('loginbackgroundlayoutsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginbackgroundlayoutsetting_desc', 'theme_boost_union', null, true);
+        $loginbackgroundlayoutoptions = [
+            THEME_BOOST_UNION_SETTING_LOGINBACKGROUNDLAYOUT_DEFAULT => get_string('loginbackgroundlayoutdefault', 'theme_boost_union'),
+            THEME_BOOST_UNION_SETTING_LOGINBACKGROUNDLAYOUT_SPLITSCREEN => get_string('loginbackgroundlayoutsplitscreen', 'theme_boost_union'),
+        ];
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_LOGINBACKGROUNDLAYOUT_DEFAULT, $loginbackgroundlayoutoptions);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+
+        // Create login order heading.
+        $name = 'theme_boost_union/loginorderheading';
+        $title = get_string('loginorderheading', 'theme_boost_union', null, true);
+        $description = get_string('loginorderheading_desc', 'theme_boost_union', null, true) . '<br /><br />' .
+                get_string('loginorderheading_note', 'theme_boost_union', null, true);
         $setting = new admin_setting_heading($name, $title, $description);
+        $tab->add($setting);
+
+        // Create the login order settings without code duplication.
+        $loginmethods = theme_boost_union_get_loginpage_methods();
+        $loginmethodsoptions = [];
+        foreach ($loginmethods as $key => $lm) {
+            $loginmethodsoptions[$key] = $key;
+        }
+        foreach ($loginmethods as $key => $lm) {
+            $name = 'theme_boost_union/loginorder' . $lm;
+            $title = get_string('loginorder' . $lm . 'setting', 'theme_boost_union', null, true);
+            $setting = new admin_setting_configselect($name, $title, null, $key, $loginmethodsoptions);
+            $setting->set_updatedcallback('theme_reset_all_caches');
+            $tab->add($setting);
+        }
+
+        // Heading: Login provider: Local.
+        $name = 'theme_boost_union/loginproviderlocalheading';
+        $title = get_string('loginproviderlocalheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
         $tab->add($setting);
 
         // Setting: Local login.
@@ -1069,6 +1110,25 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             THEME_BOOST_UNION_SETTING_SELECT_YES
         );
 
+        // Setting: Local login tab text (only visible when tab layout is enabled).
+        $name = 'theme_boost_union/loginlocallogintabtext';
+        $title = get_string('loginlocallogintabtextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginlocallogintabtextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, 'Local login', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginlocallogintabtext',
+            'theme_boost_union/loginlayout',
+            'neq',
+            'tabs'
+        );
+
+        // Heading: Login provider: IDP.
+        $name = 'theme_boost_union/loginprovideridpheading';
+        $title = get_string('loginprovideridpheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
+        $tab->add($setting);
+
         // Setting: IDP login.
         $name = 'theme_boost_union/loginidploginenable';
         $title = get_string('loginidploginenablesetting', 'theme_boost_union', null, true);
@@ -1103,39 +1163,24 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             THEME_BOOST_UNION_SETTING_SELECT_YES
         );
 
-        // Setting: Guest login.
-        $name = 'theme_boost_union/loginguestloginenable';
-        $title = get_string('loginguestloginenablesetting', 'theme_boost_union', null, true);
-        $guestloginurl = new core\url('/admin/settings.php', ['section' => 'optionalsubsystems']);
-        $description = get_string('loginguestloginenablesetting_desc', 'theme_boost_union', ['url' => $guestloginurl->out()], true);
-        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
-        $tab->add($setting);
-
-        // Setting: Guest login intro.
-        $name = 'theme_boost_union/loginguestshowintro';
-        $title = get_string('loginguestshowintrosetting', 'theme_boost_union', null, true);
-        $description = get_string('loginguestshowintrosetting_desc', 'theme_boost_union', get_string('someallowguest', 'core'), true);
-        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
+        // Setting: IDP login tab text (only visible when tab layout is enabled).
+        $name = 'theme_boost_union/loginidplogintabtext';
+        $title = get_string('loginidplogintabtextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginidplogintabtextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, 'IDP login', PARAM_TEXT);
         $tab->add($setting);
         $page->hide_if(
-            'theme_boost_union/loginguestshowintro',
-            'theme_boost_union/loginguestloginenable',
+            'theme_boost_union/loginidplogintabtext',
+            'theme_boost_union/loginlayout',
             'neq',
-            THEME_BOOST_UNION_SETTING_SELECT_YES
+            'tabs'
         );
 
-        // Setting: Guest login intro text.
-        $name = 'theme_boost_union/loginguestintrotext';
-        $title = get_string('loginguestintrotextsetting', 'theme_boost_union', null, true);
-        $description = get_string('loginguestintrotextsetting_desc', 'theme_boost_union', null, true);
-        $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+        // Heading: Login provider: Self registration.
+        $name = 'theme_boost_union/loginproviderselfregistrationheading';
+        $title = get_string('loginproviderselfregistrationheading', 'theme_boost_union', null, true);
+        $setting = new admin_setting_heading($name, $title, null);
         $tab->add($setting);
-        $page->hide_if(
-            'theme_boost_union/loginguestintrotext',
-            'theme_boost_union/loginguestshowintro',
-            'neq',
-            THEME_BOOST_UNION_SETTING_SELECT_YES
-        );
 
         // Setting: Self registration.
         $name = 'theme_boost_union/loginselfregistrationenable';
@@ -1171,46 +1216,71 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             THEME_BOOST_UNION_SETTING_SELECT_YES
         );
 
-        // Create login layout heading.
-        $name = 'theme_boost_union/loginlayoutheading';
-        $title = get_string('loginlayoutheading', 'theme_boost_union', null, true);
+        // Setting: Self registration tab text (only visible when tab layout is enabled).
+        $name = 'theme_boost_union/loginselfregistrationlogintabtext';
+        $title = get_string('loginselfregistrationlogintabtextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginselfregistrationlogintabtextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, 'Self Registration', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginselfregistrationlogintabtext',
+            'theme_boost_union/loginlayout',
+            'neq',
+            'tabs'
+        );
+
+        // Heading: Login provider: Guest.
+        $name = 'theme_boost_union/loginproviderguestheading';
+        $title = get_string('loginproviderguestheading', 'theme_boost_union', null, true);
         $setting = new admin_setting_heading($name, $title, null);
         $tab->add($setting);
 
-        // Setting: Login layout.
-        $name = 'theme_boost_union/loginlayout';
-        $title = get_string('loginlayoutsetting', 'theme_boost_union', null, true);
-        $description = get_string('loginlayoutsetting_desc', 'theme_boost_union', null, true);
-        $loginlayoutoptions = [
-            'vertical' => get_string('loginlayoutvertical', 'theme_boost_union'),
-            'tabs' => get_string('loginlayouttabs', 'theme_boost_union'),
-            'accordion' => get_string('loginlayoutaccordion', 'theme_boost_union'),
-        ];
-        $setting = new admin_setting_configselect($name, $title, $description, 'vertical', $loginlayoutoptions);
-        $setting->set_updatedcallback('theme_reset_all_caches');
+        // Setting: Guest login.
+        $name = 'theme_boost_union/loginguestloginenable';
+        $title = get_string('loginguestloginenablesetting', 'theme_boost_union', null, true);
+        $guestloginurl = new core\url('/admin/settings.php', ['section' => 'optionalsubsystems']);
+        $description = get_string('loginguestloginenablesetting_desc', 'theme_boost_union', ['url' => $guestloginurl->out()], true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_YES, $yesnooption);
         $tab->add($setting);
 
-        // Create login order heading.
-        $name = 'theme_boost_union/loginorderheading';
-        $title = get_string('loginorderheading', 'theme_boost_union', null, true);
-        $description = get_string('loginorderheading_desc', 'theme_boost_union', null, true) . '<br /><br />' .
-                get_string('loginorderheading_note', 'theme_boost_union', null, true);
-        $setting = new admin_setting_heading($name, $title, $description);
+        // Setting: Guest login intro.
+        $name = 'theme_boost_union/loginguestshowintro';
+        $title = get_string('loginguestshowintrosetting', 'theme_boost_union', null, true);
+        $description = get_string('loginguestshowintrosetting_desc', 'theme_boost_union', get_string('someallowguest', 'core'), true);
+        $setting = new admin_setting_configselect($name, $title, $description, THEME_BOOST_UNION_SETTING_SELECT_NO, $yesnooption);
         $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginguestshowintro',
+            'theme_boost_union/loginguestloginenable',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
 
-        // Create the login order settings without code duplication.
-        $loginmethods = theme_boost_union_get_loginpage_methods();
-        $loginmethodsoptions = [];
-        foreach ($loginmethods as $key => $lm) {
-            $loginmethodsoptions[$key] = $key;
-        }
-        foreach ($loginmethods as $key => $lm) {
-            $name = 'theme_boost_union/loginorder' . $lm;
-            $title = get_string('loginorder' . $lm . 'setting', 'theme_boost_union', null, true);
-            $setting = new admin_setting_configselect($name, $title, null, $key, $loginmethodsoptions);
-            $setting->set_updatedcallback('theme_reset_all_caches');
-            $tab->add($setting);
-        }
+        // Setting: Guest login intro text.
+        $name = 'theme_boost_union/loginguestintrotext';
+        $title = get_string('loginguestintrotextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginguestintrotextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, '', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginguestintrotext',
+            'theme_boost_union/loginguestshowintro',
+            'neq',
+            THEME_BOOST_UNION_SETTING_SELECT_YES
+        );
+
+        // Setting: Guest login tab text (only visible when tab layout is enabled).
+        $name = 'theme_boost_union/loginguestlogintabtext';
+        $title = get_string('loginguestlogintabtextsetting', 'theme_boost_union', null, true);
+        $description = get_string('loginguestlogintabtextsetting_desc', 'theme_boost_union', null, true);
+        $setting = new admin_setting_configtext($name, $title, $description, 'Guest Login', PARAM_TEXT);
+        $tab->add($setting);
+        $page->hide_if(
+            'theme_boost_union/loginguestlogintabtext',
+            'theme_boost_union/loginlayout',
+            'neq',
+            'tabs'
+        );
 
         // Create side entrance login heading.
         $name = 'theme_boost_union/sideentranceloginheading';
