@@ -1874,6 +1874,37 @@ function theme_boost_union_get_scss_login_order($theme) {
         // Order tab panes to match the sorted navigation order.
         $scss .= '#login-tabs-content #' . $tabid . ' { order: ' . $setting . '; }';
     }
+    
+    // CSS-only solution for fixed-height tab container.
+    // 
+    // This solution uses CSS Grid to overlay all tab panes in the same grid cell.
+    // All panes are in the grid, but only the active one is visible.
+    // Note: Pure CSS cannot calculate the maximum height of children, so the container
+    // height will be determined by the active pane only. This prevents stacking but
+    // the container may still shift slightly when switching tabs if panes have different heights.
+    //
+    // Override Bootstrap's default display: none and use CSS Grid.
+    $scss .= '#login-tabs-content { ';
+    $scss .= 'display: grid !important; ';
+    $scss .= 'grid-template-columns: 1fr; ';
+    $scss .= 'grid-template-rows: 1fr; ';
+    $scss .= '} ';
+    // All panes occupy the same grid cell (overlaying each other, not stacking).
+    $scss .= '#login-tabs-content > .tab-pane { ';
+    $scss .= 'display: block !important; ';
+    $scss .= 'grid-column: 1; ';
+    $scss .= 'grid-row: 1; ';
+    $scss .= 'visibility: hidden; ';
+    $scss .= 'opacity: 0; ';
+    $scss .= 'pointer-events: none; ';
+    $scss .= 'transition: opacity 0.15s linear; ';
+    $scss .= '} ';
+    // Active pane is visible and interactive.
+    $scss .= '#login-tabs-content > .tab-pane.show.active { ';
+    $scss .= 'visibility: visible; ';
+    $scss .= 'opacity: 1; ';
+    $scss .= 'pointer-events: auto; ';
+    $scss .= '} ';
 
     return $scss;
 }
