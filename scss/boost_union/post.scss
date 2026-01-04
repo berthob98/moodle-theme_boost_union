@@ -482,6 +482,12 @@
                 padding-top: 0;
             }
 
+            /* Remove the ::before and ::after spacer pseudo-elements in split screen mode. */
+            .login-wrapper:has(.loginform #login-tabs)::before,
+            .login-wrapper:has(.loginform #login-tabs)::after {
+                display: none;
+            }
+
             /* Make login-container and role=main take full height for flex layout. */
             .login-wrapper .login-container,
             .login-wrapper .login-container [role="main"] {
