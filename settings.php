@@ -1038,8 +1038,7 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
         // Create login order heading.
         $name = 'theme_boost_union/loginorderheading';
         $title = get_string('loginorderheading', 'theme_boost_union', null, true);
-        $description = get_string('loginorderheading_desc', 'theme_boost_union', null, true) . '<br /><br />' .
-                get_string('loginorderheading_note', 'theme_boost_union', null, true);
+        $description = get_string('loginorderheading_desc', 'theme_boost_union', null, true) . '<br />';
         $setting = new admin_setting_heading($name, $title, $description);
         $tab->add($setting);
 

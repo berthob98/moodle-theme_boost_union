@@ -371,7 +371,7 @@
         flex: 0 0 auto;
         /* Calculate height to center: (100vh - estimated container height) / 2 */
         /* Use a reasonable fixed height that centers most containers */
-        height: calc(50vh - 200px);
+        height: calc(50vh - 300px);
         min-height: 2rem;
         max-height: 50vh;
         order: -1;
@@ -520,6 +520,11 @@
                 box-sizing: border-box;
             }
 
+            /* Hide divider between heading and login-layout-vertical in split screen mode. */
+            .login-wrapper .loginform > .login-divider {
+                display: none !important; /* stylelint-disable-line declaration-no-important */
+            }
+
             /* TABS LAYOUT: Use pseudo-element on loginform to create spacer before tabs - flexible height. */
             .login-wrapper .loginform:has(#login-tabs)::before {
                 content: '';
@@ -604,6 +609,11 @@
                 flex-grow: 0;
                 order: 3;
                 margin-top: 0;
+            }
+
+            /* Hide the first divider in vertical layout when in split screen mode. */
+            .login-wrapper .loginform #theme_boost_union-loginorder .theme_boost_union-loginmethod:first-of-type > .login-divider {
+                display: none !important; /* stylelint-disable-line declaration-no-important */
             }
 
             /* Remove visual separation from login-container in split screen mode - blend into white background. */

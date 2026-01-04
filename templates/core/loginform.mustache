@@ -77,6 +77,17 @@
     {{/info}}
 
     {{! ==================================================================== }}
+    {{! DIVIDER: Between heading/messages and layout (only for vertical + default background) }}
+    {{! ==================================================================== }}
+    {{^logintabs}}
+    {{^loginaccordion}}
+    {{#loginbackgroundlayoutdefault}}
+    <div class="login-divider"></div>
+    {{/loginbackgroundlayoutdefault}}
+    {{/loginaccordion}}
+    {{/logintabs}}
+
+    {{! ==================================================================== }}
     {{! LAYOUT CONTAINER: Tabs or Vertical/Accordion                        }}
     {{! ==================================================================== }}
     {{#logintabs}}

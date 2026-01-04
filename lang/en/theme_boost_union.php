@@ -374,7 +374,6 @@ $string['loginbackgroundlayoutsplitscreen'] = 'Split Screen';
 // ... Section: Login order.
 $string['loginorderheading'] = 'Login order';
 $string['loginorderheading_desc'] = 'With these settings, you control the order of the login methods in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login methods and login form elements which are disabled in Moodle.';
-$string['loginorderheading_note'] = 'Technical note: The presented order will be realized with CSS flexbox orders, not by rearranging the login widgets in the HTML DOM. This should be fine on all modern browsers but might not work on really old browsers.';
 // ... ... Settings: Login order.
 $string['loginorderlocalsetting'] = 'Local login';
 $string['loginorderidpsetting'] = 'IDP login';

@@ -739,6 +739,16 @@ class core_renderer extends \theme_boost\output\core_renderer {
             $context->loginaccordion = true;
         }
 
+        // Check login background layout setting.
+        $loginbackgroundlayout = get_config('theme_boost_union', 'loginbackgroundlayout');
+        if ($loginbackgroundlayout === false) {
+            $loginbackgroundlayout = THEME_BOOST_UNION_SETTING_LOGINBACKGROUNDLAYOUT_DEFAULT;
+        }
+        // Set marker if background layout is default (not split screen).
+        if ($loginbackgroundlayout == THEME_BOOST_UNION_SETTING_LOGINBACKGROUNDLAYOUT_DEFAULT) {
+            $context->loginbackgroundlayoutdefault = true;
+        }
+
         // For vertical, accordion, and tabs layouts, create sorted login methods array.
         // This ensures the DOM order matches the visual order, so CSS :first-of-type and :last-of-type work correctly.
         // Note: The template uses the same loop structure for all layouts, with conditionals for tabs vs vertical/accordion.
