@@ -364,6 +364,15 @@
         align-items: center;
         justify-content: flex-start;
     }
+
+    /* Respect login form position setting when tabs are present. */
+    /* When flex-direction is column, align-items controls horizontal alignment. */
+    .login-wrapper.login-wrapper-left:has(.loginform #login-tabs) {
+        align-items: flex-start;
+    }
+    .login-wrapper.login-wrapper-right:has(.loginform #login-tabs) {
+        align-items: flex-end;
+    }
     
     /* Create a fixed-height spacer above to center initially and lock top position */
     .login-wrapper:has(.loginform #login-tabs)::before {
