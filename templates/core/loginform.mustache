@@ -115,7 +115,7 @@
         {{! --- ACCORDION LAYOUT: Bootstrap 5 accordion structure --- }}
         {{#loginaccordion}}
         <h2 class="accordion-header" id="accordion-local-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-local-content" aria-expanded="false" aria-controls="accordion-local-content">
+            <button class="accordion-button {{^activeaccordionlocal}}collapsed{{/activeaccordionlocal}}" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-local-content" {{#activeaccordionlocal}}aria-expanded="true"{{/activeaccordionlocal}}{{^activeaccordionlocal}}aria-expanded="false"{{/activeaccordionlocal}} aria-controls="accordion-local-content">
                 {{#showlocalloginintro}}
                 <span class="login-heading">{{#localloginintrotext}}{{{localloginintrotext}}}{{/localloginintrotext}}{{^localloginintrotext}}{{#str}} loginlocalintro, theme_boost_union {{/str}}{{/localloginintrotext}}</span>
                 {{/showlocalloginintro}}
@@ -123,8 +123,8 @@
                 <span class="login-heading">{{#str}} loginlocalintro, theme_boost_union {{/str}}</span>
                 {{/showlocalloginintro}}
             </button>
-        </h2>
-        <div id="accordion-local-content" class="accordion-collapse collapse" aria-labelledby="accordion-local-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+            </h2>
+        <div id="accordion-local-content" class="accordion-collapse collapse {{#activeaccordionlocal}}show{{/activeaccordionlocal}}" aria-labelledby="accordion-local-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
         <div class="accordion-body">
         {{/loginaccordion}}
 
@@ -199,16 +199,16 @@
         {{! --- ACCORDION LAYOUT: Bootstrap 5 accordion structure --- }}
         {{#loginaccordion}}
         <h2 class="accordion-header" id="accordion-idp-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-idp-content" aria-expanded="false" aria-controls="accordion-idp-content">
-                {{#showidploginintro}}
-                <span class="login-heading">{{#idploginintrotext}}{{{idploginintrotext}}}{{/idploginintrotext}}{{^idploginintrotext}}{{#str}} potentialidps, auth {{/str}}{{/idploginintrotext}}</span>
-                {{/showidploginintro}}
-                {{^showidploginintro}}
-                <span class="login-heading">{{#str}} potentialidps, auth {{/str}}</span>
-                {{/showidploginintro}}
-            </button>
-        </h2>
-        <div id="accordion-idp-content" class="accordion-collapse collapse" aria-labelledby="accordion-idp-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+            <button class="accordion-button {{^activeaccordionidp}}collapsed{{/activeaccordionidp}}" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-idp-content" {{#activeaccordionidp}}aria-expanded="true"{{/activeaccordionidp}}{{^activeaccordionidp}}aria-expanded="false"{{/activeaccordionidp}} aria-controls="accordion-idp-content">
+                    {{#showidploginintro}}
+                    <span class="login-heading">{{#idploginintrotext}}{{{idploginintrotext}}}{{/idploginintrotext}}{{^idploginintrotext}}{{#str}} potentialidps, auth {{/str}}{{/idploginintrotext}}</span>
+                    {{/showidploginintro}}
+                    {{^showidploginintro}}
+                    <span class="login-heading">{{#str}} potentialidps, auth {{/str}}</span>
+                    {{/showidploginintro}}
+                </button>
+            </h2>
+        <div id="accordion-idp-content" class="accordion-collapse collapse {{#activeaccordionidp}}show{{/activeaccordionidp}}" aria-labelledby="accordion-idp-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
             <div class="accordion-body">
         {{/loginaccordion}}
 
@@ -255,7 +255,7 @@
         {{! --- ACCORDION LAYOUT: Bootstrap 5 accordion structure --- }}
         {{#loginaccordion}}
         <h2 class="accordion-header" id="accordion-signup-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-signup-content" aria-expanded="false" aria-controls="accordion-signup-content">
+            <button class="accordion-button {{^activeaccordionsignup}}collapsed{{/activeaccordionsignup}}" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-signup-content" {{#activeaccordionsignup}}aria-expanded="true"{{/activeaccordionsignup}}{{^activeaccordionsignup}}aria-expanded="false"{{/activeaccordionsignup}} aria-controls="accordion-signup-content">
                 {{#showselfregistrationloginintro}}
                 <span class="login-heading">{{#selfregistrationloginintrotext}}{{{selfregistrationloginintrotext}}}{{/selfregistrationloginintrotext}}{{^selfregistrationloginintrotext}}{{#str}}firsttime{{/str}}{{/selfregistrationloginintrotext}}</span>
                 {{/showselfregistrationloginintro}}
@@ -263,8 +263,8 @@
                 <span class="login-heading">{{#str}}firsttime{{/str}}</span>
                 {{/showselfregistrationloginintro}}
             </button>
-        </h2>
-        <div id="accordion-signup-content" class="accordion-collapse collapse" aria-labelledby="accordion-signup-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+            </h2>
+        <div id="accordion-signup-content" class="accordion-collapse collapse {{#activeaccordionsignup}}show{{/activeaccordionsignup}}" aria-labelledby="accordion-signup-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
         <div class="accordion-body">
         {{/loginaccordion}}
 
@@ -316,16 +316,16 @@
         {{! --- ACCORDION LAYOUT: Bootstrap 5 accordion structure --- }}
         {{#loginaccordion}}
         <h2 class="accordion-header" id="accordion-guest-header">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-guest-content" aria-expanded="false" aria-controls="accordion-guest-content">
-                {{#showguestloginintro}}
-                <span class="login-heading">{{#guestloginintrotext}}{{{guestloginintrotext}}}{{/guestloginintrotext}}{{^guestloginintrotext}}{{#str}}someallowguest{{/str}}{{/guestloginintrotext}}</span>
-                {{/showguestloginintro}}
-                {{^showguestloginintro}}
-                <span class="login-heading">{{#str}}someallowguest{{/str}}</span>
-                {{/showguestloginintro}}
-            </button>
-        </h2>
-        <div id="accordion-guest-content" class="accordion-collapse collapse" aria-labelledby="accordion-guest-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
+            <button class="accordion-button {{^activeaccordionguest}}collapsed{{/activeaccordionguest}}" type="button" data-bs-toggle="collapse" data-bs-target="#accordion-guest-content" {{#activeaccordionguest}}aria-expanded="true"{{/activeaccordionguest}}{{^activeaccordionguest}}aria-expanded="false"{{/activeaccordionguest}} aria-controls="accordion-guest-content">
+                    {{#showguestloginintro}}
+                    <span class="login-heading">{{#guestloginintrotext}}{{{guestloginintrotext}}}{{/guestloginintrotext}}{{^guestloginintrotext}}{{#str}}someallowguest{{/str}}{{/guestloginintrotext}}</span>
+                    {{/showguestloginintro}}
+                    {{^showguestloginintro}}
+                    <span class="login-heading">{{#str}}someallowguest{{/str}}</span>
+                    {{/showguestloginintro}}
+                </button>
+            </h2>
+        <div id="accordion-guest-content" class="accordion-collapse collapse {{#activeaccordionguest}}show{{/activeaccordionguest}}" aria-labelledby="accordion-guest-header" data-bs-parent="{{#loginaccordion}}#theme_boost_union-loginorder{{/loginaccordion}}">
             <div class="accordion-body">
         {{/loginaccordion}}
 
@@ -469,8 +469,15 @@
     });
     {{/loginaccordion}}
     {{#logintabs}}
+    (function() {
+        // Clear URL hash if it references a login tab.
+        if (window.location.hash && (window.location.hash.indexOf('login-tab') !== -1 || window.location.hash.indexOf('login-') !== -1)) {
+            history.replaceState(null, null, window.location.pathname + window.location.search);
+        }
+    })();
+    
     require(['jquery'], function($) {
-        // Wait for Bootstrap to be available, then initialize tabs.
+        // Wait for Bootstrap to be available, then handle tab clicks.
         function whenBootstrapIsAvailable(callback) {
             if (typeof $().tab === 'function') {
                 callback();
@@ -481,39 +488,103 @@
             }
         }
         
-        $(document).ready(function() {
-            whenBootstrapIsAvailable(function() {
-                var $tabs = $('#login-tabs a[data-bs-toggle="tab"]');
+        // Run immediately and also on document ready to catch any late changes.
+        function enforceCorrectTab() {
+            var $tabs = $('#login-tabs a[data-bs-toggle="tab"]');
                 var $tabPanes = $('#login-tabs-content .tab-pane');
                 
-                // Check if tabs and panes exist.
-                if ($tabs.length === 0 || $tabPanes.length === 0) {
+            if ($tabs.length === 0) {
                     return;
                 }
                 
-                // Ensure only the first tab pane is visible initially.
-                $tabPanes.removeClass('show active');
-                var $firstActiveTab = $tabs.filter('.active').first();
-                if ($firstActiveTab.length > 0) {
-                    var firstTargetId = $firstActiveTab.attr('href');
-                    $(firstTargetId).addClass('show active');
-                } else {
-                    // If no active tab link, activate the first one.
-                    var $firstTab = $tabs.first();
-                    if ($firstTab.length > 0) {
-                        $firstTab.addClass('active').attr('aria-selected', 'true');
-                        var firstTargetId = $firstTab.attr('href');
-                        $(firstTargetId).addClass('show active');
-                    }
+            // Find the tab that should be active based on template rendering.
+            // Check for active class on tabs first.
+            var $activeTab = $tabs.filter('.active').first();
+            
+            // If no active tab found, check which pane has active class.
+            if ($activeTab.length === 0) {
+                var $activePane = $tabPanes.filter('.show.active').first();
+                if ($activePane.length > 0) {
+                    var paneId = $activePane.attr('id');
+                    $activeTab = $tabs.filter('[href="#' + paneId + '"]');
                 }
+            }
+            
+            // If still no active tab, use the first one (fallback).
+            if ($activeTab.length === 0) {
+                $activeTab = $tabs.first();
+            }
+            
+            var activeTargetId = $activeTab.attr('href');
+            
+            // Remove active from all tabs and panes.
+            $tabs.removeClass('active').attr('aria-selected', 'false');
+                $tabPanes.removeClass('show active');
+            
+            // Set the correct tab and pane as active.
+            if ($activeTab.length > 0 && activeTargetId) {
+                $activeTab.addClass('active').attr('aria-selected', 'true');
+                $(activeTargetId).addClass('show active');
+            }
+        }
+        
+        // Run immediately if DOM is ready, otherwise wait.
+        if (document.readyState === 'loading') {
+            $(document).ready(function() {
+                enforceCorrectTab();
+                whenBootstrapIsAvailable(function() {
+                    enforceCorrectTab();
+                    
+                    var $tabs = $('#login-tabs a[data-bs-toggle="tab"]');
+                    
+                    // Handle tab clicks using Bootstrap's tab method.
+                    $tabs.on('click', function (e) {
+                        e.preventDefault();
+                        $(this).tab('show');
+                    });
+                    
+                    // Prevent any tab show events from other sources on initial load.
+                    // Use a flag to ignore the first few tab show events.
+                    var ignoreTabShows = true;
+                    setTimeout(function() {
+                        ignoreTabShows = false;
+                    }, 1000);
+                    
+                    $tabs.on('shown.bs.tab', function(e) {
+                        if (ignoreTabShows) {
+                            // Restore the correct tab if something tried to change it.
+                            setTimeout(enforceCorrectTab, 10);
+                        }
+                    });
+                });
+            });
+        } else {
+            // DOM is already ready, run immediately.
+            enforceCorrectTab();
+            whenBootstrapIsAvailable(function() {
+                enforceCorrectTab();
+                
+                var $tabs = $('#login-tabs a[data-bs-toggle="tab"]');
                 
                 // Handle tab clicks using Bootstrap's tab method.
                 $tabs.on('click', function (e) {
                     e.preventDefault();
                     $(this).tab('show');
                 });
+                
+                // Prevent any tab show events from other sources on initial load.
+                var ignoreTabShows = true;
+                setTimeout(function() {
+                    ignoreTabShows = false;
+                }, 1000);
+                
+                $tabs.on('shown.bs.tab', function(e) {
+                    if (ignoreTabShows) {
+                        setTimeout(enforceCorrectTab, 10);
+                    }
             });
         });
+        }
     });
     {{/logintabs}}
 {{/js}}

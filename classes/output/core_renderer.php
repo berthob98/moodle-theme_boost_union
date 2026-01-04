@@ -825,6 +825,32 @@ class core_renderer extends \theme_boost\output\core_renderer {
                 return $a->order <=> $b->order;
             });
 
+            // For accordion layout, determine which item should be open by default.
+            if ($loginlayout == 'accordion') {
+                $primarylogin = get_config('theme_boost_union', 'primarylogin');
+                if ($primarylogin === false) {
+                    $primarylogin = 'none';
+                }
+                // Set flags for which accordion item should be open.
+                if ($primarylogin != 'none') {
+                    switch ($primarylogin) {
+                        case 'local':
+                            $context->activeaccordionlocal = true;
+                            break;
+                        case 'idp':
+                            $context->activeaccordionidp = true;
+                            break;
+                        case 'firsttimesignup':
+                        case 'signup':
+                            $context->activeaccordionsignup = true;
+                            break;
+                        case 'guest':
+                            $context->activeaccordionguest = true;
+                            break;
+                    }
+                }
+            }
+
             $context->loginmethods = $loginmethods;
         }
 
@@ -916,11 +942,40 @@ class core_renderer extends \theme_boost\output\core_renderer {
                 return $a->order <=> $b->order;
             });
 
-            // Set the first tab as active and update context flags.
-            $firsttab = true;
+            // Determine which tab should be active based on primarylogin setting.
+            $primarylogin = get_config('theme_boost_union', 'primarylogin');
+            if ($primarylogin === false) {
+                $primarylogin = 'none';
+            }
+            
+            // Map 'firsttimesignup' to 'signup' for tab matching.
+            $activetabname = ($primarylogin != 'none') ? $primarylogin : null;
+            if ($activetabname === 'firsttimesignup') {
+                $activetabname = 'signup';
+            }
+
+            // Set the active tab and update context flags.
+            // First, find which tab should be active.
+            $activetab = null;
+            if ($activetabname !== null) {
+                // Find the tab that matches the primarylogin setting.
+                foreach ($tabs as $tab) {
+                    if ($tab->name === $activetabname) {
+                        $activetab = $tab;
+                        break;
+                    }
+                }
+            }
+            // If no matching tab found, use the first tab as default.
+            if ($activetab === null && !empty($tabs)) {
+                $activetab = $tabs[0];
+            }
+
+            // Now set active flag only on the selected tab.
             foreach ($tabs as $tab) {
-                $tab->active = $firsttab;
-                if ($firsttab) {
+                $tab->active = ($tab === $activetab);
+                
+                if ($tab->active) {
                     // Set the active flag for the corresponding tab content.
                     switch ($tab->name) {
                         case 'local':
@@ -936,7 +991,6 @@ class core_renderer extends \theme_boost\output\core_renderer {
                             $context->activetabguest = true;
                             break;
                     }
-                    $firsttab = false;
                 }
             }
 

@@ -1057,6 +1057,25 @@ if ($hassiteconfig || has_capability('theme/boost_union:configure', context_syst
             $tab->add($setting);
         }
 
+        // Setting: Primary login method (for tabs and accordion layouts).
+        $name = 'theme_boost_union/primarylogin';
+        $title = get_string('primaryloginsetting', 'theme_boost_union', null, true);
+        $description = get_string('primaryloginsetting_desc', 'theme_boost_union', null, true);
+        $primaryloginoptions = ['none' => get_string('none')];
+        foreach ($loginmethods as $key => $lm) {
+            $primaryloginoptions[$lm] = get_string('loginorder' . $lm . 'setting', 'theme_boost_union', null, true);
+        }
+        $setting = new admin_setting_configselect($name, $title, $description, 'none', $primaryloginoptions);
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $tab->add($setting);
+        // Only show this setting when tabs or accordion layout is enabled (hide for vertical layout).
+        $page->hide_if(
+            'theme_boost_union/primarylogin',
+            'theme_boost_union/loginlayout',
+            'eq',
+            'vertical'
+        );
+
         // Heading: Login provider: Local.
         $name = 'theme_boost_union/loginproviderlocalheading';
         $title = get_string('loginproviderlocalheading', 'theme_boost_union', null, true);

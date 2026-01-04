@@ -380,6 +380,9 @@ $string['loginorderlocalsetting'] = 'Local login';
 $string['loginorderidpsetting'] = 'IDP login';
 $string['loginorderfirsttimesignupsetting'] = 'Information for first time visitors & Self registration';
 $string['loginorderguestsetting'] = 'Guest login';
+// ... ... Setting: Primary login.
+$string['primaryloginsetting'] = 'Primary login method';
+$string['primaryloginsetting_desc'] = 'With this setting, you can specify which login method should be opened by default when the page loads. This setting only applies to the tabs layout and accordion layout. If set to "None", the first login method (based on the login order settings) will be opened by default.';
 // ... ... Setting: Guest login.
 $string['loginguestloginenablesetting'] = 'Guest login';
 $string['loginguestloginenablesetting_desc'] = 'With this setting, you control if the guest login button is shown on the login page or not. By default, the guest login button is shown if guest access is enabled in Moodle core. If you disable this setting, the guest login button is hidden regardless of the core guest access setting.<br /><br /><strong>Core setting:</strong> Guest access is controlled by the <em>Enable guest access</em> setting in <a href="{$a->url}">Site administration → Advanced features</a> (optionalsubsystems).<br /><br />Please note: The guest login button will be hidden if either this setting is disabled OR if the Moodle core setting "Guest login button" (in Site administration > Plugins > Authentication > Manage authentication) is disabled.';
