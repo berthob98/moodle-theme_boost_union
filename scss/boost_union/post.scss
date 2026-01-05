@@ -343,7 +343,8 @@
     }
     
     /* Allow login-container to expand when tabs need more space. */
-    .login-container:has(#login-tabs) {
+    /* Exclude split screen mode where container should respect wrapper width. */
+    body.pagelayout-login:not(.login-background-layout-splitscreen) .login-container:has(#login-tabs) {
         width: auto !important; /* stylelint-disable-line declaration-no-important */
         min-width: $logincontainer-width;
         max-width: 100%;
@@ -401,18 +402,6 @@
     }
 }
 
-/*---------------------------------------
- * Login heading overflow fix
- --------------------------------------*/
-
-/* Prevent login heading from overflowing the container.
-   Using Bootstrap's text-break approach (word-wrap) plus max-width utility equivalent. */
-.login-heading {
-    word-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
-    overflow-wrap: break-word !important; /* stylelint-disable-line declaration-no-important */
-    max-width: 100%;
-    box-sizing: border-box;
-}
 
 /*---------------------------------------
  * Setting: Login background layout
@@ -462,21 +451,18 @@
                 padding-bottom: $spacer * 2;
 
                 /* Make region-main-box and region-main take full width. */
-                #region-main-box {  
+                #region-main-box,
+                #region-main-box #region-main {
                     padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
                     padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
                     margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
                     margin-right: 0 !important; /* stylelint-disable-line declaration-no-important */
+                }
 
-                    #region-main {
-                        padding-left: 0 !important; /* stylelint-disable-line declaration-no-important */
-                        padding-right: 0 !important; /* stylelint-disable-line declaration-no-important */
-                        margin-left: 0 !important; /* stylelint-disable-line declaration-no-important */
-                        margin-right: 0 !important; /* stylelint-disable-line declaration-no-important */
-                        height: 100%;
-                        display: flex;
-                        flex-direction: column;
-                    }
+                #region-main-box #region-main {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
                 }
             }
 
@@ -522,11 +508,6 @@
                 flex-grow: 0;
                 margin-top: 0;
                 order: 0;
-                /* Prevent overflow in split-screen layout. */
-                word-wrap: break-word;
-                overflow-wrap: break-word;
-                max-width: 100%;
-                box-sizing: border-box;
             }
 
             /* Hide divider between heading and login-layout-vertical in split screen mode. */
@@ -545,41 +526,55 @@
                 order: 1;
             }
 
-            /* Position login tabs at fixed height - no grow/shrink. */
-            .login-wrapper .loginform > #login-tabs {
-                flex-shrink: 0;
-                flex-grow: 0;
-                width: 100%;
-                order: 2;
-                margin-top: 0;
-                margin-bottom: 0;
-            }
-
-            /* Position tabs content right below tabs - no gap. */
+            /* Position login tabs and tabs content at fixed height - no grow/shrink. */
+            .login-wrapper .loginform > #login-tabs,
             .login-wrapper .loginform > #login-tabs-content {
                 flex-shrink: 0;
                 flex-grow: 0;
                 width: 100%;
-                order: 3;
                 margin-top: 0;
                 margin-bottom: 0;
             }
 
-            /* TABS LAYOUT: Create a spacer after tabs content to push d-flex to bottom. */
-            .login-wrapper .loginform:has(#login-tabs)::after {
+            .login-wrapper .loginform > #login-tabs {
+                order: 2;
+            }
+
+            .login-wrapper .loginform > #login-tabs-content {
+                order: 3;
+            }
+
+            /* Common flex properties for spacer pseudo-elements after tabs/loginorder. */
+            .login-wrapper .loginform:has(#login-tabs)::after,
+            .login-wrapper .loginform:has(#theme_boost_union-loginorder)::after {
                 content: '';
                 flex-grow: 1;
                 flex-shrink: 1;
                 min-height: 0;
+            }
+
+            .login-wrapper .loginform:has(#login-tabs)::after {
                 order: 4;
             }
 
+            .login-wrapper .loginform:has(#theme_boost_union-loginorder)::after {
+                order: 2;
+            }
+
             /* TABS LAYOUT: Position d-flex at bottom. */
-            .login-wrapper .loginform:has(#login-tabs) > .d-flex {
+            .login-wrapper .loginform:has(#login-tabs) > .d-flex,
+            .login-wrapper .loginform:has(#theme_boost_union-loginorder) > .d-flex {
                 flex-shrink: 0;
                 flex-grow: 0;
-                order: 5;
                 margin-top: 0;
+            }
+
+            .login-wrapper .loginform:has(#login-tabs) > .d-flex {
+                order: 5;
+            }
+
+            .login-wrapper .loginform:has(#theme_boost_union-loginorder) > .d-flex {
+                order: 3;
             }
 
             /* VERTICAL LAYOUT: Position theme_boost_union-loginorder with spacing from heading. */
@@ -603,21 +598,8 @@
                 max-height: 30vh; /* Maximum height to prevent pushing content out */
             }
 
-            /* Create a spacer after theme_boost_union-loginorder to push d-flex to bottom. */
-            .login-wrapper .loginform:has(#theme_boost_union-loginorder)::after {
-                content: '';
-                flex-grow: 1;
-                flex-shrink: 1;
-                min-height: 0;
-                order: 2;
-            }
-
-            /* Position d-flex at bottom for vertical layout. */
             .login-wrapper .loginform:has(#theme_boost_union-loginorder) > .d-flex {
-                flex-shrink: 0;
-                flex-grow: 0;
                 order: 3;
-                margin-top: 0;
             }
 
             /* Hide the first divider in vertical layout when in split screen mode. */
@@ -632,6 +614,7 @@
                 border-radius: 0 !important; /* stylelint-disable-line declaration-no-important */
                 width: 100% !important; /* stylelint-disable-line declaration-no-important */
                 max-width: 100% !important; /* stylelint-disable-line declaration-no-important */
+                min-width: 0 !important; /* stylelint-disable-line declaration-no-important */
                 padding-left: 0;
                 padding-right: 0;
                 padding-top: 0;

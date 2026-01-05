@@ -590,7 +590,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
      * @return string
      */
     public function render_login(\core_auth\output\login $form) {
-        global $CFG, $SITE;
+        global $SITE;
 
         $context = $form->export_for_template($this);
 
@@ -669,8 +669,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         $showguestlogin = ($loginguestloginenablesetting != false) ? $loginguestloginenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
         
         // Check Moodle core's "Guest login button" setting.
-        global $CFG;
-        $coreguestloginbutton = !empty($CFG->guestloginbutton);
+        $coreguestloginbutton = !empty(get_config('core', 'guestloginbutton'));
         
         // Show guest login only if both theme setting AND core setting are enabled.
         if ($showguestlogin == THEME_BOOST_UNION_SETTING_SELECT_YES && $coreguestloginbutton) {
@@ -704,7 +703,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         
         // Check Moodle core's "Self registration" setting.
         // This follows the same logic as Moodle core: checks if registerauth is set.
-        $coreregisterauth = !empty($CFG->registerauth);
+        $coreregisterauth = !empty(get_config('core', 'registerauth'));
         
         // Show self registration only if both theme setting AND core setting are enabled.
         if ($showselfregistration == THEME_BOOST_UNION_SETTING_SELECT_YES && $coreregisterauth) {
@@ -793,8 +792,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
             // Method: Self registration.
             // Only show if self registration is enabled in theme settings AND (signup is allowed OR instructions exist).
-            $loginselfregistrationenablesetting = get_config('theme_boost_union', 'loginselfregistrationenable');
-            $showselfregistration = ($loginselfregistrationenablesetting != false) ? $loginselfregistrationenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+            // Reuse $showselfregistration from earlier check (line 703).
             if ($showselfregistration == THEME_BOOST_UNION_SETTING_SELECT_YES && (!empty($context->cansignup) || !empty($context->hasinstructions))) {
                 $order = get_config('theme_boost_union', 'loginorderfirsttimesignup');
                 if ($order === false) {
@@ -834,6 +832,11 @@ class core_renderer extends \theme_boost\output\core_renderer {
             usort($loginmethods, function($a, $b) {
                 return $a->order <=> $b->order;
             });
+
+            // Mark the first method in the sorted array.
+            if (!empty($loginmethods)) {
+                $loginmethods[0]->isfirst = true;
+            }
 
             // For accordion layout, determine which item should be open by default.
             if ($loginlayout == 'accordion') {
@@ -908,8 +911,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
             // Tab: Self registration.
             // Only show if self registration is enabled in theme settings AND (signup is allowed OR instructions exist).
-            $loginselfregistrationenablesetting = get_config('theme_boost_union', 'loginselfregistrationenable');
-            $showselfregistration = ($loginselfregistrationenablesetting != false) ? $loginselfregistrationenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+            // Reuse $showselfregistration from earlier check (line 703).
             if ($showselfregistration == THEME_BOOST_UNION_SETTING_SELECT_YES && (!empty($context->cansignup) || !empty($context->hasinstructions))) {
                 $order = get_config('theme_boost_union', 'loginorderfirsttimesignup');
                 if ($order === false) {

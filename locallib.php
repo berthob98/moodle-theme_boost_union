@@ -1839,46 +1839,6 @@ function theme_boost_union_get_loginpage_methods() {
 }
 
 /**
- * Returns the SCSS code to re-order the elements of the login form, depending on the theme settings loginorder*.
- *
- * @param \core\output\theme_config $theme The theme config object.
- * @return string
- */
-function theme_boost_union_get_scss_login_order($theme) {
-    // Initialize SCSS snippet.
-    $scss = '';
-
-    // Get the login methods.
-    $loginmethods = theme_boost_union_get_loginpage_methods();
-
-    // Hide the first login-divider (as we have added login-dividers to all orderable login methods,
-    // but do not want a divider between the page heading and the first login method).
-    // Only apply this when not in accordion layout (accordion doesn't use dividers).
-    // Since login methods are now rendered in the correct DOM order, we can use :first-of-type.
-    $scss .= '#theme_boost_union-loginorder:not(.accordion) .theme_boost_union-loginmethod:first-of-type .login-divider { display: none; }';
-
-    // Note: Accordion border-radius is handled by Bootstrap's built-in accordion CSS.
-    // Bootstrap's `.accordion > .card:not(:last-of-type)` and `.accordion > .card:not(:first-of-type)`
-    // automatically handle the border-radius for accordion cards, so no custom CSS is needed.
-
-    // Apply ordering to tabs layout: tab navigation items and tab panes.
-    // Note: Tab navigation items are already sorted in PHP, but we apply ordering to tab panes for consistency.
-    $scss .= '#login-tabs-content { display: flex; flex-direction: column; }';
-    foreach ($loginmethods as $lm) {
-        $setting = get_config('theme_boost_union', 'loginorder' . $lm);
-        // Map login method names to tab IDs.
-        $tabid = 'login-tab-' . $lm;
-        if ($lm == 'firsttimesignup') {
-            $tabid = 'login-tab-signup';
-        }
-        // Order tab panes to match the sorted navigation order.
-        $scss .= '#login-tabs-content #' . $tabid . ' { order: ' . $setting . '; }';
-    }
-
-    return $scss;
-}
-
-/**
  * Helper function which returns the list of possible touch icons for iOS.
  *
  * @return array A multidimensional array
