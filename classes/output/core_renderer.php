@@ -607,19 +607,9 @@ class core_renderer extends \theme_boost\output\core_renderer {
         );
 
         // Check if the local login form is enabled.
-        // The local login form should be shown only if BOTH conditions are met:
-        // 1. The theme setting 'loginlocalloginenable' is enabled
-        // 2. The Moodle core setting 'showloginform' (Display manual login form) is enabled
         $loginlocalloginsetting = get_config('theme_boost_union', 'loginlocalloginenable');
         $showlocallogin = ($loginlocalloginsetting != false) ? $loginlocalloginsetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
-        
-        // Check Moodle core's "Display manual login form" setting.
-        // This follows the same logic as Moodle core: defaults to true if not set, otherwise uses the configured value.
-        $coreshowloginform = get_config('core', 'showloginform');
-        $coreshowloginform = ($coreshowloginform === false || $coreshowloginform);
-        
-        // Show local login only if both theme setting AND core setting are enabled.
-        if ($showlocallogin == THEME_BOOST_UNION_SETTING_SELECT_YES && $coreshowloginform) {
+        if ($showlocallogin == THEME_BOOST_UNION_SETTING_SELECT_YES) {
             // Add marker to show the local login form to template context.
             $context->showlocallogin = true;
         }
