@@ -322,7 +322,7 @@ $string['logincontainerwidthsetting'] = 'Login container width';
 $string['logincontainerwidthsetting_desc'] = 'With this setting, you can override Moodle\'s fixed login container width of 500px. By default, Moodle uses a login container width of 500px on medium and larger screens. You can enter other pixel-based values like 600px, but you can also enter a percentage-based value like 90% or a viewport-width value like 50vw.';
 // ... Section: Login providers.
 $string['loginprovidersheading'] = 'Login providers';
-$string['loginprovidersheading_desc'] = 'Please note: Boost Union has its own login providers settings that work in addition to Moodle core\'s authentication settings. Some login providers (like Local login) also respect Moodle core settings. Please check the individual provider settings below for details.';
+$string['loginprovidersheading_desc'] = 'Please note: Boost Union has its own login providers settings that work in addition to Moodle core\'s authentication settings. Some login providers also respect Moodle core settings. Please check the individual provider settings below for details.';
 $string['loginproviderlocalheading'] = 'Login provider: Local';
 $string['loginprovideridpheading'] = 'Login provider: IDP';
 $string['loginproviderguestheading'] = 'Login provider: Guest';
