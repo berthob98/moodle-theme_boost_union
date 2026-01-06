@@ -273,15 +273,6 @@
         <div class="alert alert-info" id="logininfomessage" role="status">{{info}}</div>
     {{/info}}
 
-    {{! Divider before layout (only for vertical layout with default background) }}
-    {{^logintabs}}
-    {{^loginaccordion}}
-    {{#loginbackgroundlayoutdefault}}
-    <div class="login-divider"></div>
-    {{/loginbackgroundlayoutdefault}}
-    {{/loginaccordion}}
-    {{/logintabs}}
-
     {{! =========================================================================== }}
     {{! LAYOUT CONTAINER: Tabs or Vertical/Accordion }}
     {{! =========================================================================== }}
@@ -674,37 +665,6 @@
             Submit.init("loginguestbtn");
         {{/canloginasguest}}
     });
-
-    {{! Accordion layout initialization }}
-    {{#loginaccordion}}
-    require(['jquery'], function($) {
-        function whenBootstrapIsAvailable(callback) {
-            if (typeof $().collapse === 'function') {
-                callback();
-            } else {
-                setTimeout(function() {
-                    whenBootstrapIsAvailable(callback);
-                }, 100);
-            }
-        }
-        
-        $(document).ready(function() {
-            whenBootstrapIsAvailable(function() {
-                $('#theme_boost_union-loginorder .accordion-header .accordion-button').on('click', function() {
-                    var $button = $(this);
-                    var targetSelector = $button.attr('data-bs-target');
-                    var $target = $(targetSelector);
-                    var parentSelector = $target.attr('data-bs-parent');
-                    var $parent = $(parentSelector);
-                    
-                    if ($parent.length > 0) {
-                        $parent.find('.collapse.show').not($target).collapse('hide');
-                    }
-                });
-            });
-        });
-    });
-    {{/loginaccordion}}
 
     {{! Tabs layout: Clear URL hash }}
     {{#logintabs}}
