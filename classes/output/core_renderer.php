@@ -26,6 +26,8 @@ namespace theme_boost_union\output;
 
 use context_course;
 use context_system;
+use core_course_list_element;
+use coursecat_helper;
 use moodle_url;
 use stdClass;
 use core\di;
@@ -33,6 +35,8 @@ use core\hook\manager as hook_manager;
 use core\hook\output\before_standard_footer_html_generation;
 use core\output\html_writer;
 use core_block\output\block_contents;
+use theme_boost_union\coursesettings;
+use theme_boost_union\util\course;
 
 /**
  * Extending the core_renderer interface.
@@ -470,33 +474,267 @@ class core_renderer extends \theme_boost\output\core_renderer {
         $header->courseheader = $this->course_header();
         $header->headeractions = $this->page->get_header_actions();
 
-        // Add the course header image for rendering.
-        if (
-            $this->page->pagelayout == 'course' && (get_config('theme_boost_union', 'courseheaderimageenabled')
-                        == THEME_BOOST_UNION_SETTING_SELECT_YES)
-        ) {
-            // If course header images are activated, we get the course header image url
-            // (which might be the fallback image depending on the course settings and theme settings).
-            $header->courseheaderimageurl = theme_boost_union_get_course_header_image_url();
-            // Additionally, get the course header image height.
-            $header->courseheaderimageheight = get_config('theme_boost_union', 'courseheaderimageheight');
-            // Additionally, get the course header image position.
-            $header->courseheaderimageposition = get_config('theme_boost_union', 'courseheaderimageposition');
-            // Additionally, get the template context attributes for the course header image layout.
-            $courseheaderimagelayout = get_config('theme_boost_union', 'courseheaderimagelayout');
-            switch ($courseheaderimagelayout) {
-                case THEME_BOOST_UNION_SETTING_COURSEIMAGELAYOUT_HEADINGABOVE:
-                    $header->courseheaderimagelayoutheadingabove = true;
-                    $header->courseheaderimagelayoutstackedclass = '';
-                    break;
-                case THEME_BOOST_UNION_SETTING_COURSEIMAGELAYOUT_STACKEDDARK:
-                    $header->courseheaderimagelayoutheadingabove = false;
-                    $header->courseheaderimagelayoutstackedclass = 'dark';
-                    break;
-                case THEME_BOOST_UNION_SETTING_COURSEIMAGELAYOUT_STACKEDLIGHT:
-                    $header->courseheaderimagelayoutheadingabove = false;
-                    $header->courseheaderimagelayoutstackedclass = 'light';
-                    break;
+        // Initialize a marker that course header is not enabled.
+        $header->courseheaderenabled = false;
+
+        // If we are on a course page.
+        if ($this->page->pagelayout == 'course') {
+            // If enabled, add the enhanced course header data for rendering.
+            if (coursesettings::get_config_with_course_override('courseheaderenabled') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                // If course headers are activated, we get the course header image url
+                // (which might be the global image depending on the course settings and theme settings).
+                $courseheaderimageurl = theme_boost_union_get_course_header_image_url();
+
+                // Get the course header background type setting.
+                $courseheaderimagerequirement = get_config('theme_boost_union', 'courseheaderimagerequirement');
+
+                // If there is no course header image url and the background type is set to show standard header only in this case,
+                // we don't enable the enhanced course header.
+                if (
+                    empty($courseheaderimageurl) &&
+                        $courseheaderimagerequirement == THEME_BOOST_UNION_SETTING_COURSEHEADERIMAGEREQUIREMENT_STANDARDONLY
+                ) {
+                    // Don't set course header as enabled, so the standard course header will be used.
+                    $header->courseheaderenabled = false;
+                } else {
+                    // Set a marker that course header is enabled.
+                    $header->courseheaderenabled = true;
+                    // Set the course header image url (might be empty if background type allows it).
+                    $header->courseheaderimageurl = $courseheaderimageurl;
+                    // Additionally, get the course header height.
+                    $header->courseheaderheight = coursesettings::get_config_with_course_override('courseheaderheight');
+                    // Additionally, get the course header image position.
+                    $header->courseheaderimageposition =
+                            coursesettings::get_config_with_course_override('courseheaderimageposition');
+                    // Additionally, get the course header canvas border and background and determine the CSS classes.
+                    $courseheadercanvasborder = coursesettings::get_config_with_course_override('courseheadercanvasborder');
+                    $courseheadercanvasbackground = coursesettings::get_config_with_course_override('courseheadercanvasbackground');
+                    // Build the CSS header canvas class string including withimage/withoutimage and background classes.
+                    $canvasclasses = [];
+                    // Add withimage or withoutimage class.
+                    if (!empty($courseheaderimageurl)) {
+                        $canvasclasses[] = 'withimage';
+                    } else {
+                        $canvasclasses[] = 'withoutimage';
+                    }
+                    // Add background classes based on setting.
+                    switch ($courseheadercanvasbackground) {
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBACKGROUND_WHITE:
+                            $canvasclasses[] = 'bg-white';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBACKGROUND_LIGHTGREY:
+                            $canvasclasses[] = 'bg-light';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBACKGROUND_LIGHTBRANDCOLOR:
+                            $canvasclasses[] = 'bg-primary-light';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBACKGROUND_BRANDCOLORGRADIENTLIGHT:
+                            $canvasclasses[] = 'bg-primary-gradient-light';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBACKGROUND_BRANDCOLORGRADIENTFULL:
+                            $canvasclasses[] = 'bg-primary-gradient-full';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBACKGROUND_TRANSPARENT:
+                        default:
+                            // No background class added.
+                            break;
+                    }
+                    $header->courseheadercanvasclasses = implode(' ', $canvasclasses);
+                    // Build the CSS header border class string based on setting.
+                    switch ($courseheadercanvasborder) {
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBORDER_GREY:
+                            $borderclasses = 'border-secondary border';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBORDER_BRANDCOLOR:
+                            $borderclasses = 'border-primary border';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERCANVASBORDER_NONE:
+                        default:
+                            // No border class added.
+                            $borderclasses = '';
+                            break;
+                    }
+                    $header->courseheaderborderclasses = $borderclasses;
+                    // Additionally, set text on image style classes based on setting.
+                    $courseheadertextonimagestyle = coursesettings::get_config_with_course_override('courseheadertextonimagestyle');
+                    switch ($courseheadertextonimagestyle) {
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERTEXTONIMAGESTYLE_LIGHT:
+                            $header->textonimagestyle = 'textonimage-light';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERTEXTONIMAGESTYLE_LIGHTSHADOW:
+                            $header->textonimagestyle = 'textonimage-lightshadow';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERTEXTONIMAGESTYLE_LIGHTBG:
+                            $header->textonimagestyle = 'textonimage-lightbg';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERTEXTONIMAGESTYLE_DARK:
+                            $header->textonimagestyle = 'textonimage-dark';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERTEXTONIMAGESTYLE_DARKSHADOW:
+                            $header->textonimagestyle = 'textonimage-darkshadow';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERTEXTONIMAGESTYLE_DARKBG:
+                            $header->textonimagestyle = 'textonimage-darkbg';
+                            break;
+                    }
+                    // Additionally, determine the partial template for the course header layout.
+                    $courseheaderlayout = coursesettings::get_config_with_course_override('courseheaderlayout');
+                    switch ($courseheaderlayout) {
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERLAYOUT_HEADINGABOVE:
+                            $courseheadertemplate = 'theme_boost_union/full_header-partial-headingabove';
+                            break;
+                        case THEME_BOOST_UNION_SETTING_COURSEHEADERLAYOUT_STACKED:
+                            $courseheadertemplate = 'theme_boost_union/full_header-partial-stacked';
+                            break;
+                    }
+
+                    // Note: The following code is more or less duplicated in course_renderer::coursecat_coursebox_content().
+                    // This was done on purpose as it is not a 100% copy and creating another helper function would not have
+                    // improved the code quality much.
+
+                    // Get course util for the course.
+                    $courselistelement = new core_course_list_element($this->page->course);
+                    $courseutil = new course($courselistelement);
+                    $chelper = new coursecat_helper();
+
+                    // Enable course contacts, if configured.
+                    if (get_config('theme_boost_union', 'courseheadershowcontacts') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                        $header->showcoursecontacts = true;
+                    } else {
+                        $header->showcoursecontacts = false;
+                    }
+
+                    // Enable course shortname, if configured.
+                    if (get_config('theme_boost_union', 'courseheadershowshortname') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                        $header->showshortname = true;
+                    } else {
+                        $header->showshortname = false;
+                    }
+
+                    // Enable course category, if configured.
+                    if (get_config('theme_boost_union', 'courseheadershowcategory') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                        $header->showcoursecategory = true;
+                    } else {
+                        $header->showcoursecategory = false;
+                    }
+
+                    // Enable course progress, if configured.
+                    if (get_config('theme_boost_union', 'courseheadershowprogress') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                        $header->showcourseprogress = true;
+                    } else {
+                        $header->showcourseprogress = false;
+                    }
+
+                    // Enable course fields, if configured.
+                    if (get_config('theme_boost_union', 'courseheadershowfields') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                        $header->showcoursefields = true;
+                    } else {
+                        $header->showcoursefields = false;
+                    }
+
+                    // Enable course details popup, if configured.
+                    if (get_config('theme_boost_union', 'courseheadershowpopup') == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                        $header->showcoursepopup = true;
+
+                        // Add the necessary JS.
+                        $this->page->requires->js_call_amd('theme_boost_union/coursedetailsmodal', 'init');
+                    } else {
+                        $header->showcoursepopup = false;
+                    }
+
+                    // Enable edit icon, if configured and if edit mode is on.
+                    if (
+                        get_config('theme_boost_union', 'courseheadershowediticon') == THEME_BOOST_UNION_SETTING_SELECT_YES &&
+                            $this->page->user_is_editing()
+                    ) {
+                        $header->showcourseediticon = true;
+                        // Get the course settings URL with the course header settings as anchor.
+                        $header->coursesettingsurl = new moodle_url(
+                            '/course/edit.php',
+                            ['id' => $this->page->course->id],
+                            'id_theme_boost_union_course_courseheaderhdr'
+                        );
+                    } else {
+                        $header->showcourseediticon = false;
+                    }
+
+                    // Enable iconsbar, if necessary.
+                    if ($header->showcoursepopup || $header->showcoursecontacts || $header->showcourseediticon) {
+                        $header->showiconsbar = true;
+                    } else {
+                        $header->showiconsbar = false;
+                    }
+
+                    // Check if the user can view user details, if necessary.
+                    if ($header->showcoursecontacts || $header->showcoursepopup) {
+                        $header->canviewuserdetails =
+                                has_capability('moodle/user:viewdetails', \context_course::instance($this->page->course->id));
+                    }
+
+                    // Amend course contacts, if enabled.
+                    if ($header->showcoursecontacts || $header->showcoursepopup) {
+                        $header->contacts = $courseutil->get_course_contacts();
+                        $header->hascontacts = (count($header->contacts) > 0);
+                    }
+
+                    // Amend course shortname, if enabled.
+                    if ($header->showshortname) {
+                        $header->shortname = $courselistelement->shortname;
+                    }
+
+                    // Amend course fullname, if enabled.
+                    if ($header->showcoursepopup) {
+                        $header->fullname = $courselistelement->fullname;
+                    }
+
+                    // Amend course category, if enabled.
+                    if ($header->showcoursecategory) {
+                        $header->coursecategory = $courseutil->get_category();
+                    }
+
+                    // Amend course summary, if enabled.
+                    if ($header->showcoursepopup) {
+                        $header->summary = $courseutil->get_summary($chelper);
+                        $header->hassummary = ($header->summary != false);
+                    }
+
+                    // Amend custom fields, if enabled.
+                    if ($header->showcoursefields || $header->showcoursepopup) {
+                        $header->customfields = $courseutil->get_custom_fields('header');
+                        $header->hascustomfields = ($header->customfields != false);
+
+                        // If custom fields should be shown as badges.
+                        $courseheaderstylefields = get_config('theme_boost_union', 'courseheaderstylefields');
+                        if ($courseheaderstylefields == THEME_BOOST_UNION_SETTING_SHOWAS_BADGE) {
+                            $header->customfieldsstyleasbadge = true;
+
+                            // Otherwise.
+                        } else {
+                            $header->customfieldsstyleasbadge = false;
+                        }
+                    }
+
+                    // Amend course progress, if enabled.
+                    if ($header->showcourseprogress) {
+                        $courseprogress = $courseutil->get_progress();
+                        $header->progress = (int) $courseprogress;
+                        $header->hasprogress = ($courseprogress !== null);
+
+                        // If progress should be shown as progress bar.
+                        $courseprogressstyle = get_config('theme_boost_union', 'courseheaderprogressstyle');
+                        if ($courseprogressstyle == THEME_BOOST_UNION_SETTING_COURSEPROGRESSSTYLE_BAR) {
+                            $header->progressstyleasbar = true;
+
+                            // Otherwise.
+                        } else {
+                            $header->progressstyleasbar = false;
+                        }
+                    }
+
+                    // Render the course header partial template for the course header and add it to the header data.
+                    // This approach is taken as Mustache does not support dynamicly named partials.
+                    $header->courseheaderhtml = $this->render_from_template($courseheadertemplate, $header);
+                }
             }
         }
 
@@ -581,7 +819,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
      * @return string
      */
     public function render_login(\core_auth\output\login $form) {
-        global $CFG, $SITE;
+        global $SITE;
 
         $context = $form->export_for_template($this);
 
@@ -597,30 +835,314 @@ class core_renderer extends \theme_boost\output\core_renderer {
             ['context' => context_course::instance(SITEID), "escape" => false]
         );
 
-        // Check if the local login form is enabled.
+        // Compute show* flags for all four login types (theme setting + Moodle core).
+        // visibility is controlled in the template via these show* parameters.
+
+        // Local login: theme setting only.
         $loginlocalloginsetting = get_config('theme_boost_union', 'loginlocalloginenable');
-        $showlocallogin = ($loginlocalloginsetting != false) ? $loginlocalloginsetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
-        if ($showlocallogin == THEME_BOOST_UNION_SETTING_SELECT_YES) {
-            // Add marker to show the local login form to template context.
-            $context->showlocallogin = true;
+        $showlocalloginenabled = ($loginlocalloginsetting != false)
+            ? $loginlocalloginsetting
+            : THEME_BOOST_UNION_SETTING_SELECT_YES;
+        $context->showlocallogin = ($showlocalloginenabled == THEME_BOOST_UNION_SETTING_SELECT_YES);
+
+        // IDP login: theme setting AND core has identity providers.
+        $loginidploginenablesetting = get_config('theme_boost_union', 'loginidploginenable');
+        $showidploginenabled = ($loginidploginenablesetting != false)
+            ? $loginidploginenablesetting
+            : THEME_BOOST_UNION_SETTING_SELECT_YES;
+        $context->showidplogin = ($showidploginenabled == THEME_BOOST_UNION_SETTING_SELECT_YES) &&
+            !empty($context->hasidentityproviders) && !empty($context->identityproviders);
+
+        // Guest login: theme setting AND Moodle core guest login button enabled.
+        $loginguestloginenablesetting = get_config('theme_boost_union', 'loginguestloginenable');
+        $showguestloginenabled = ($loginguestloginenablesetting != false) ?
+            $loginguestloginenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+        $coreguestloginbutton = !empty(get_config('core', 'guestloginbutton'));
+        $context->showguestlogin = ($showguestloginenabled == THEME_BOOST_UNION_SETTING_SELECT_YES) && $coreguestloginbutton &&
+            !empty($context->canloginasguest);
+
+        // Self registration: theme setting AND Moodle core registerauth configured.
+        $loginselfregistrationenablesetting = get_config('theme_boost_union', 'loginselfregistrationenable');
+        $showselfregistrationenabled = ($loginselfregistrationenablesetting != false) ?
+            $loginselfregistrationenablesetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
+        $coreregisterauth = !empty(get_config('core', 'registerauth'));
+        $context->showselfregistration = ($showselfregistrationenabled == THEME_BOOST_UNION_SETTING_SELECT_YES)
+            && $coreregisterauth
+            && (!empty($context->cansignup) || !empty($context->hasinstructions));
+
+        // Process intro settings only when the corresponding login type is shown.
+
+        if ($context->showlocallogin) {
+            $loginlocalshowintrosetting = get_config('theme_boost_union', 'loginlocalshowintro');
+            $showlocalloginintro = ($loginlocalshowintrosetting != false) ?
+                $loginlocalshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_NO;
+            if ($showlocalloginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                $context->showlocalloginintro = true;
+                $loginlocalintrotext = get_config('theme_boost_union', 'loginlocalintrotext');
+                if (!empty($loginlocalintrotext)) {
+                    $context->localloginintrotext = format_string(
+                        $loginlocalintrotext,
+                        true,
+                        ['context' => context_system::instance()]
+                    );
+                }
+            }
         }
 
-        // Check if the local login intro is enabled.
-        $loginlocalshowintrosetting = get_config('theme_boost_union', 'loginlocalshowintro');
-        $showlocalloginintro = ($loginlocalshowintrosetting != false) ?
-            $loginlocalshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_NO;
-        if ($showlocalloginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
-            // Add marker to show the local login intro to template context.
-            $context->showlocalloginintro = true;
-        }
-
-        // Check if the IDP login intro is enabled.
-        $loginidpshowintrosetting = get_config('theme_boost_union', 'loginidpshowintro');
-        $showidploginintro = ($loginidpshowintrosetting != false) ?
+        if ($context->showidplogin) {
+            $loginidpshowintrosetting = get_config('theme_boost_union', 'loginidpshowintro');
+            $showidploginintro = ($loginidpshowintrosetting != false) ?
                 $loginidpshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_YES;
-        if ($showidploginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
-            // Add marker to show the IDP login intro to template context.
-            $context->showidploginintro = true;
+            if ($showidploginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                $context->showidploginintro = true;
+                $loginidpintrotext = get_config('theme_boost_union', 'loginidpintrotext');
+                if (!empty($loginidpintrotext)) {
+                    $context->idploginintrotext = format_string(
+                        $loginidpintrotext,
+                        true,
+                        ['context' => context_system::instance()]
+                    );
+                }
+            }
+        }
+
+        if ($context->showguestlogin) {
+            $loginguestshowintrosetting = get_config('theme_boost_union', 'loginguestshowintro');
+            $showguestloginintro = ($loginguestshowintrosetting != false) ?
+                $loginguestshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_NO;
+            if ($showguestloginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                $context->showguestloginintro = true;
+                $loginguestintrotext = get_config('theme_boost_union', 'loginguestintrotext');
+                if (!empty($loginguestintrotext)) {
+                    $context->guestloginintrotext = format_string(
+                        $loginguestintrotext,
+                        true,
+                        ['context' => context_system::instance()]
+                    );
+                }
+            }
+        }
+
+        if ($context->showselfregistration) {
+            $loginselfregistrationshowintrosetting = get_config('theme_boost_union', 'loginselfregistrationshowintro');
+            $showselfregistrationloginintro = ($loginselfregistrationshowintrosetting != false) ?
+                $loginselfregistrationshowintrosetting : THEME_BOOST_UNION_SETTING_SELECT_NO;
+            if ($showselfregistrationloginintro == THEME_BOOST_UNION_SETTING_SELECT_YES) {
+                $context->showselfregistrationloginintro = true;
+                $loginselfregistrationintrotext = get_config('theme_boost_union', 'loginselfregistrationintrotext');
+                if (!empty($loginselfregistrationintrotext)) {
+                    $context->selfregistrationloginintrotext = format_string(
+                        $loginselfregistrationintrotext,
+                        true,
+                        ['context' => context_system::instance()]
+                    );
+                }
+            }
+        }
+
+        // Check login layout setting.
+        $loginlayoutsetting = get_config('theme_boost_union', 'loginlayout');
+        $loginlayout = ($loginlayoutsetting != false) ? $loginlayoutsetting : THEME_BOOST_UNION_SETTING_LOGINLAYOUT_VERTICAL;
+        $context->loginlayout = $loginlayout;
+
+        // If accordion layout is enabled, set marker.
+        if ($loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_ACCORDION) {
+            $context->loginaccordion = true;
+        }
+
+        // For vertical, accordion, and tabs layouts, create sorted login methods array.
+        // This ensures the DOM order matches the visual order, so CSS :first-of-type and :last-of-type work correctly.
+        // Note: The template uses the same loop structure for all layouts, with conditionals for tabs vs vertical/accordion.
+        if (
+            $loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_VERTICAL ||
+                $loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_ACCORDION ||
+                $loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_TABS
+        ) {
+            $loginmethods = [];
+
+            // Method: Local login.
+            if (!empty($context->showlocallogin)) {
+                $order = get_config('theme_boost_union', 'loginorderlocal');
+                if ($order === false) {
+                    $order = 1; // Default order.
+                }
+                $loginmethods[] = (object)[
+                    'id' => 'theme_boost_union-loginorder-local',
+                    'name' => 'local',
+                    'order' => $order,
+                    'type' => 'local',
+                    'islocal' => true,
+                    'isidp' => false,
+                    'isfirsttimesignup' => false,
+                    'isguest' => false,
+                    'isfirst' => false,
+                ];
+            }
+
+            // Method: IDP login.
+            if (!empty($context->showidplogin)) {
+                $order = get_config('theme_boost_union', 'loginorderidp');
+                if ($order === false) {
+                    $order = 2; // Default order.
+                }
+                $loginmethods[] = (object)[
+                    'id' => 'theme_boost_union-loginorder-idp',
+                    'name' => 'idp',
+                    'order' => $order,
+                    'type' => 'idp',
+                    'islocal' => false,
+                    'isidp' => true,
+                    'isfirsttimesignup' => false,
+                    'isguest' => false,
+                    'isfirst' => false,
+                ];
+            }
+
+            // Method: Self registration.
+            if (!empty($context->showselfregistration)) {
+                $order = get_config('theme_boost_union', 'loginorderfirsttimesignup');
+                if ($order === false) {
+                    $order = 3; // Default order.
+                }
+                $loginmethods[] = (object)[
+                    'id' => 'theme_boost_union-loginorder-firsttimesignup',
+                    'name' => 'firsttimesignup',
+                    'order' => $order,
+                    'type' => 'firsttimesignup',
+                    'islocal' => false,
+                    'isidp' => false,
+                    'isfirsttimesignup' => true,
+                    'isguest' => false,
+                    'isfirst' => false,
+                ];
+            }
+
+            // Method: Guest login.
+            if (!empty($context->showguestlogin)) {
+                $order = get_config('theme_boost_union', 'loginorderguest');
+                if ($order === false) {
+                    $order = 4; // Default order.
+                }
+                $loginmethods[] = (object)[
+                    'id' => 'theme_boost_union-loginorder-guest',
+                    'name' => 'guest',
+                    'order' => $order,
+                    'type' => 'guest',
+                    'islocal' => false,
+                    'isidp' => false,
+                    'isfirsttimesignup' => false,
+                    'isguest' => true,
+                    'isfirst' => false,
+                ];
+            }
+
+            // Sort login methods by order setting.
+            usort($loginmethods, function ($a, $b) {
+                return $a->order <=> $b->order;
+            });
+
+            // Mark the first method in the sorted array.
+            if (!empty($loginmethods)) {
+                $loginmethods[0]->isfirst = true;
+            }
+
+            // For tabs and accordion layouts, add label information to each login method.
+            if (
+                $loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_TABS ||
+                    $loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_ACCORDION
+            ) {
+                $logintablabelconfigs = [
+                    'local' => ['config' => 'loginlocalloginlabel', 'default' => 'loginlocalloginlabelsetting_default'],
+                    'idp' => ['config' => 'loginidploginlabel', 'default' => 'loginidploginlabelsetting_default'],
+                    'firsttimesignup' => [
+                        'config' => 'loginselfregistrationloginlabel',
+                        'default' => 'loginselfregistrationloginlabelsetting_default',
+                    ],
+                    'guest' => ['config' => 'loginguestloginlabel', 'default' => 'loginguestloginlabelsetting_default'],
+                ];
+                foreach ($loginmethods as $method) {
+                    $labelconfig = $logintablabelconfigs[$method->name] ?? null;
+                    if ($labelconfig !== null) {
+                        $label = get_config('theme_boost_union', $labelconfig['config']);
+                        if ($label === false || $label === '') {
+                            $label = get_string($labelconfig['default'], 'theme_boost_union');
+                        }
+                    } else {
+                        $label = '';
+                    }
+                    $method->label = $label;
+                }
+            }
+
+            // For accordion layout, determine which item should be open by default.
+            if ($loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_ACCORDION) {
+                $primarylogin = get_config('theme_boost_union', 'primarylogin');
+                if ($primarylogin === false) {
+                    $primarylogin = 'none';
+                }
+                // Set flag for which accordion item should be open.
+                if ($primarylogin != 'none') {
+                    $context->{'activeaccordion' . $primarylogin} = true;
+                }
+            }
+
+            $context->loginmethods = $loginmethods;
+        }
+
+        // If tabs layout is enabled, prepare tab structure.
+        if ($loginlayout == THEME_BOOST_UNION_SETTING_LOGINLAYOUT_TABS) {
+            $tabs = [];
+
+            // Build tabs from loginmethods array (which already has labels).
+            foreach ($loginmethods as $method) {
+                $tabid = 'login-tab-' . $method->name;
+                $tabs[] = (object)[
+                    'id' => $tabid,
+                    'name' => $method->name,
+                    'displayname' => $method->label,
+                    'order' => $method->order,
+                    'content' => $method->name,
+                ];
+            }
+
+            // Sort tabs by order setting.
+            usort($tabs, function ($a, $b) {
+                return $a->order <=> $b->order;
+            });
+
+            // Determine which tab should be active based on primarylogin setting.
+            $primarylogin = get_config('theme_boost_union', 'primarylogin');
+            if ($primarylogin === false) {
+                $primarylogin = 'none';
+            }
+            $activetabname = ($primarylogin != 'none') ? $primarylogin : null;
+
+            // Set the active tab and update context flags.
+            // First, find which tab should be active.
+            $activetab = null;
+            if ($activetabname !== null) {
+                // Find the tab that matches the primarylogin setting.
+                foreach ($tabs as $tab) {
+                    if ($tab->name === $activetabname) {
+                        $activetab = $tab;
+                        break;
+                    }
+                }
+            }
+            // If no matching tab found, use the first tab as default.
+            if ($activetab === null && !empty($tabs)) {
+                $activetab = $tabs[0];
+            }
+
+            // Now set active flag only on the selected tab and the corresponding context flag.
+            foreach ($tabs as $tab) {
+                $tab->active = ($tab === $activetab);
+                if ($tab->active) {
+                    $context->{'activetab' . $tab->name} = true;
+                }
+            }
+
+            $context->logintabs = (object)['tabs' => $tabs];
         }
 
         return $this->render_from_template('core/loginform', $context);
@@ -758,6 +1280,82 @@ class core_renderer extends \theme_boost\output\core_renderer {
     }
 
     /**
+     * Returns course-specific information to be output immediately above content on any course page
+     * (for the current course)
+     *
+     * This renderer function is copied and modified from /lib/classes/output/core_renderer.php
+     *
+     * It is based on the standard_end_of_body_html() function but was split into two parts
+     * (for the additionalhtmlfooter and the unique endtoken) to be requested individually in footer.mustache
+     * in Boost Union.
+     *
+     * @param bool $onlyifnotcalledbefore output content only if it has not been output before
+     * @return string
+     */
+    public function course_content_header_notifications($onlyifnotcalledbefore = false) {
+        static $functioncalled = false;
+        if ($functioncalled && $onlyifnotcalledbefore) {
+            // We have already output the notifications.
+            return '';
+        }
+
+        // Output any session notification.
+        $notifications = \core\notification::fetch();
+
+        $bodynotifications = '';
+        foreach ($notifications as $notification) {
+            $bodynotifications .= $this->render_from_template(
+                $notification->get_template_name(),
+                $notification->export_for_template($this)
+            );
+        }
+
+        $output = html_writer::span($bodynotifications, 'notifications', ['id' => 'user-notifications']);
+
+        $functioncalled = true;
+
+        return $output;
+    }
+
+    /**
+     * Returns course-specific information to be output immediately above content on any course page
+     * (for the current course)
+     *
+     * This renderer function is copied and modified from /lib/classes/output/core_renderer.php
+     *
+     * It is based on the standard_end_of_body_html() function but was split into two parts
+     * (for the additionalhtmlfooter and the unique endtoken) to be requested individually in footer.mustache
+     * in Boost Union.
+     *
+     * @param bool $onlyifnotcalledbefore output content only if it has not been output before
+     * @return string
+     */
+    public function course_content_header_coursecontent($onlyifnotcalledbefore = false) {
+        global $CFG;
+
+        static $functioncalled = false;
+        if ($functioncalled && $onlyifnotcalledbefore) {
+            // We have already output the course content header.
+            return '';
+        }
+
+        $output = '';
+
+        if ($this->page->course->id == SITEID) {
+            // Return immediately and do not include /course/lib.php if not necessary.
+            return $output;
+        }
+
+        require_once($CFG->dirroot . '/course/lib.php');
+        $functioncalled = true;
+        $courseformat = course_get_format($this->page->course);
+        if (($obj = $courseformat->course_content_header()) !== null) {
+            $output .= html_writer::div($courseformat->get_renderer($this->page)->render($obj), 'course-content-header');
+        }
+        return $output;
+    }
+
+    /**
      * The standard tags (typically script tags that are not needed earlier) that
      * should be output after everything else. Designed to be called in theme layout.php files.
      *
@@ -845,6 +1443,49 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
         // Return the parent header() output.
         return $output;
+    }
+
+    /**
+     * Get the course pattern datauri to show on a course card.
+     *
+     * This renderer function is copied and modified from /lib/classes/output/core_renderer.php
+     *
+     * @param int $id Id to use when generating the pattern
+     * @return string datauri or URL to fallback image
+     */
+    public function get_generated_image_for_id($id) {
+        // Get the course overview image source setting.
+        $imagesource = get_config('theme_boost_union', 'courseoverviewimagesource');
+
+        // If not set, use the default (course image with pattern fallback).
+        if (!$imagesource) {
+            $imagesource = THEME_BOOST_UNION_SETTING_COURSEOVERVIEWIMAGESOURCE_COURSEPLUSPATTERN;
+        }
+
+        // Handle the different image source options.
+        switch ($imagesource) {
+            // Option 1: Course image with pattern fallback (default Moodle behavior).
+            case THEME_BOOST_UNION_SETTING_COURSEOVERVIEWIMAGESOURCE_COURSEPLUSPATTERN:
+                return parent::get_generated_image_for_id($id);
+
+            // Option 2: Course image with fallback image.
+            case THEME_BOOST_UNION_SETTING_COURSEOVERVIEWIMAGESOURCE_COURSEPLUSFALLBACK:
+                // This function is called only if there is no course image and the caller is requesting
+                // the course pattern image as fallback. We do not need to check for the course image here,
+                // just return the fallback image instead of the pattern.
+
+                // Try to get and return the fallback image.
+                $fallbackimageurl = theme_boost_union_get_course_overview_fallback_image_url();
+                if ($fallbackimageurl !== null) {
+                    return $fallbackimageurl->out();
+                }
+                // If no fallback image is configured, use the pattern.
+                return parent::get_generated_image_for_id($id);
+
+            // Default fallback.
+            default:
+                return parent::get_generated_image_for_id($id);
+        }
     }
 
     /**

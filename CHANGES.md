@@ -6,7 +6,31 @@ Changes
 
 ### Unreleased
 
-* 2025-11-19 - Improve the check for date-based smart menus from < to <= when checking for the starting date.
+* 2025-01-27 - Feature: Add new login layouts and other login settings, resolves #1055
+* 2026-01-30 - Admin: Move the category breadcrumb from "Feel" to "Look" near the new course header settings.
+* 2026-01-22 - Improvement: Add a setting to control if a particular info banner is shown above of below the page header.
+* 2026-01-22 - Improvement: Align minor aspects (course shortname, course fields, course progress) of the look of the course-card and course-list view of the course listings more with the new course headers in Boost Union and less with the My courses page of Moodle core.
+* 2026-01-22 - Feature: Enhance the adaptability of the course header including the possibility for teachers to configure it per course, resolves #138.
+               Please note: If you have uploaded an image in the "Fallback course header image" filearea before, this image will be migrated to the new "Global course header image" filearea during this update.
+* 2026-02-03 - Bugfix: Site support form success message was shown below blocks or advert tiles on frontpage, resolves #488
+* 2026-02-01 - Feature: Add dark variant setting for the slider, resolves #914
+* 2026-02-01 - Feature: Add individual carousel item interval setting for each slide, resolves #915
+* 2026-02-01 - Improvement: Replace smartmenu_item_edit_form.js with Moodle core solution for hiding headers, resolves #1028
+* 2026-02-01 - Bug: Changing the activity icon purpose of LTI activities did not have an effect in the activity chooser, resolves #690
+* 2026-02-01 - Improvement: Get rid of ESLint warning in drawers.mustache, resolves #1107
+
+### v5.1-r3
+
+* 2026-01-31 - Feature: Allow the admin to upload a course overview fallback image to be used on the myoverview page instead of the geometric pattern, resolves #171
+* 2026-01-31 - Admin: courselistingprogressstyle was not hidden again if courselistingpresentation was disabled after courselistinghowprogress was enabled, resolves #1135
+* 2026-01-28 - Bugfix: The installation of Boost Union crashed on latest moodle main after MOD_PURPOSE_INTERFACE was removed in Moodle 5.2dev, resolves #1126.
+* 2026-01-27 - Tests: The "Allow admins to use the tertiary navigation to navigate between the individual Boost Union admin pages" scenario failed on 5.0 and 5.1, resolves #1123
+
+### v5.1-r2
+
+* 2026-01-21 - Bugfix: On brand-new Moodle installations, Boost Union tried to access the mdl_files table before it was created, resolves #1058
+* 2026-01-21 - Bugfix: Moodle core unittest was failing due to a missing fallback svg icon, resolves #1113
+* 2025-11-19 - Improvement: Improve the check for date-based smart menus from < to <= when checking for the starting date.
 * 2025-11-19 - Internal changes: Align internal filearea names for slide and tile backgrounds, helps to resolve #839
                Please note: While an upgrade script should migrate existing files, please double-check if existing slides and advertisement tiles are still presented correctly on the frontpage.
 * 2025-11-19 - Tests: Further Behat runtime optimisations, helps to resolve #839

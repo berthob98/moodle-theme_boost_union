@@ -205,23 +205,27 @@ With this setting, you can optimize the login form to fit to a greater variety o
 
 With this setting, you can make the login form slightly transparent to let the background image shine through even more.
 
-##### Login providers
+###### Login container width
 
-###### Local login
+With this setting, you can control the width of the login container. By default, the login container width is set to 500px.
 
-With this setting, you control if the local login form is shown on the login page or not. By default, the local login form is shown and users can login into the site as normal. If you disable this setting, the local login form is hidden. This allows you to just provide login buttons for external identity providers like OAuth2 or OIDC.
+##### Login layout
 
-###### Local login intro
+###### Login layout
 
-With this setting, you control if a 'Login with your Moodle account' intro is shown above the local login form or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand which credentials to use in the local login form, especially if you provide more than one login method or if you have changed the order of the login methods.
+With this setting, you can choose how the login providers are displayed on the login page.
 
-###### IDP login intro
+###### Login background layout
 
-With this setting, you control if the 'Log in using your account on' intro is shown above the IDP login buttons or not. By default, the intro is shown and users will be quickly informed what the IDP buttons are about. If you disable this setting, the IDP intro is hidden. This allows you to provide a clean user login interface if you just use external identity providers like OAuth2 or OIDC.
+With this setting, you can choose the background layout for the login page.
 
 ##### Login order
 
-With these settings, you control the order of the login methods in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login methods and login form elements which are disabled in Moodle.
+With these settings, you control the order of the login providers in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login providers and login form elements which are disabled in Boost Union.
+
+##### Login providers
+
+In these section, you control if and how particilar login providers are presented on the login page.
 
 ##### Side entrance login
 
@@ -238,6 +242,12 @@ With this setting, you can control whether the course image is visible inside th
 ###### Show course completion progress
 
 With this setting, you can control whether the course completion progress is visible inside the course overview block or not.
+
+##### Course overview images
+
+###### Course overview image source
+
+With this setting, you control the source of the image which is shown in the course overview block, on the category index pages and on the course list on site home. The main source for this image is the course image which is uploaded in the particular course's settings. If this image is not available, you can choose if you want to show a generated geometric pattern or a fallback course overview image.
 
 #### Tab "Category index / Site home"
 
@@ -259,25 +269,15 @@ With this setting, you can tint the activity icons in the activities block based
 
 ##### Course Header
 
-###### Display the course image in the course header
+###### Enable enhanced course header
 
-When enabled, the course image (which can be uploaded in a course's course settings) is displayed in the header of a course. The course images are shown there in addition to the 'My courses' page where they are always shown.
+When enabled, the course header (which is just the course title in Moodle core) is enhanced by additional elements like the course image (which can be uploaded in a course's course settings) and other course metadata, depending how you configure the course header in detail.
 
-###### Fallback course header image
+##### Breadcrumbs
 
-If you upload an image in this setting, it is used as fallback image and is displayed in the course header if no course image is uploaded in a particular course's course settings. If you do not upload an image here, a course header image is only shown in a particular course if a course image is uploaded in this particular course's course settings.
+###### Display the category breadcrumbs in the course header
 
-###### Course header image layout
-
-With this setting, you control the layout of the course header image and the course title.
-
-###### Course header image height
-
-With this setting, you control the height of the presented course header image.
-
-###### Course header image position
-
-With this setting, you control the positioning of the course header image within the course header container. The first value is the horizontal position, the second value is the vertical position.
+By default, the course category breadcrumbs are not shown on course pages in the course header. With this setting, you can show the course category breadcrumbs in the course header above the course name.
 
 ##### Course index
 
@@ -372,12 +372,6 @@ With this setting, you can show a popover menu with links to starred courses nex
 ###### Starred courses popover cog icon link target
 
 With this setting, you can set the link target of the cog icon in the starred courses popover. By default, the cog icon links to the 'My courses' page. However, you can also link to the 'Dashboard' page, especially if you have disabled the 'My courses' page in the primary navigation.
-
-##### Breadcrumbs
-
-###### Display the category breadcrumbs in the course header
-
-By default, the course category breadcrumbs are not shown on course pages in the course header. With this setting, you can show the course category breadcrumbs in the course header above the course name.
 
 ##### Navigation
 
@@ -647,6 +641,14 @@ These capabilities are used to control who is allowed to see a particular block 
 
 These capabilities are used to control who is allowed to edit a particular block region. By default, they are assigned to teachers, non-editing teachers and managers.
 
+### theme/boost_union:overridecourseheaderincourse
+
+This capability is used to control who is able to override the course header settings in a course (if this feature was enabled in the theme settings). By default, it is assigned to teachers and managers.
+
+### theme/boost_union:transfercourseheaderduringimport
+
+This capability is used to control who will trigger the transfer of a course header during course import. Controlling this by a capability is an option due to technical limitations, please see the "Backup & Restore" section in this file for details. By default, it is assigned to managers.
+
 
 Scheduled Tasks
 ---------------
@@ -689,6 +691,24 @@ This is perfectly fine as long as admins to not want to fiddle with the list of 
 To ease such admin tasks as well as the crafting of SCSS Snippet PRs,
 this CLI script can be run and will re-populate the list of built-in SCSS snippets based on the list of snippets
 which exist on disk in the theme/boost_union/snippets/builtin directory.
+
+
+Backup & Restore
+----------------
+
+This plugin has the following support for backup & restore:
+
+### Course-specific settings
+
+The course-specific settings which can be set within a particular course's settings page, for example for the course header feature, are included in course backups.
+
+However, it has to be noted that this fully works only for these backup & restore cases:
+* Creating a course backup file and restoring it onto the same site. In this case, course-specific settings are always added to the course backup. And during restore, the teacher can decide if he wants to restore course-specific settings or not.
+* Copying / duplicating the course on the same site. In this case, course-specific settings are always duplicated together with the rest of the course.
+
+For these backup & restore strategies, functional limitations apply:
+* Importing course content from one course into another course on the same site. In this case, course-specific settings can be transferred from the source course to the target course, but Boost Union can't let the teacher decide the question within the course import wizard during a particular import. This is due to functional limitations in Moodle core. Instead, the administrator has to configure the desired global behaviour for Boost Union as a whole.
+* Creating a course backup file and restoring it onto another site. In this case, depending on the Boost Union version and configuration on the target site, the course-specific settings might have no effect or get lost during the restore.
 
 
 Exceptions to our main design principle
@@ -918,9 +938,11 @@ Moodle an Hochschulen e.V. would like to thank these main contributors (in alpha
 * Bern University of Applied Sciences (BFH), Luca Bösch: Code, Peer Review, Ideating
 * Carinthia University of Applied Sciences, Mario Wehr: Code
 * Catalyst IT Australia, Brendan Heywood: Code
+* Catalyst IT Canada, Karl Michael Reyes: Code
 * Catalyst IT Europe, Mark Johnson: Code
 * Catalyst IT Europe, Simon Thornett: Code
 * ELAN e.V., Farbod Zamani: Code
+* ETH Zürich, nexterday: Code
 * FernUniversität in Hagen, Daniel Poggenpohl: Code, Ideating
 * Hochschule Hannover - University of Applied Sciences and Arts: Code, Funding, Ideating
 * Käferfreie Software, Nina Herrmann: Code
@@ -942,6 +964,7 @@ Moodle an Hochschulen e.V. would like to thank these main contributors (in alpha
 * Solent University, Mark Sharp: Code
 * ssystems GmbH, Alexander Bias: Code, Peer Review, Ideating, Funding
 * ssystems GmbH, Sangyul Cha: Code
+* ssystems GmbH, berthob98: Code
 * Technische Universität Berlin, Lars Bonczek: Code
 * University of Bayreuth, Nikolai Jahreis: Code
 * University of California, San Francisco, Stefan Topfstedt: Code

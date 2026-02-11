@@ -52,6 +52,13 @@ $string['imageposition_left_bottom'] = 'Left horizontally, bottom vertically';
 $string['imageposition_right_top'] = 'Right horizontally, top vertically';
 $string['imageposition_right_center'] = 'Right horizontally, center vertically';
 $string['imageposition_right_bottom'] = 'Right horizontally, bottom vertically';
+$string['bycapability'] = 'Controlled by capability';
+
+// Course overrides: General strings.
+$string['courseoverride'] = 'Add to course settings as well';
+$string['courseoverride_desc'] = 'The Boost Union settings in this section come with the possibility to override the global setting (which is set here) in each course. As soon as you tick the \'Add to course settings as well\' checkbox for a setting, the setting will be added to the course settings form where teachers, managers and admins (or any other role which you add the theme/boost_union:overridecourseheaderincourse capability to) can override the global setting for each course individually. If you do not tick the checkbox, the setting will not be added to the course settings form and the global setting will always apply.';
+$string['useglobaldefault'] = 'Use global default ({$a})';
+$string['nocourseoverride'] = 'This setting cannot be overridden in the course settings.';
 
 // Settings: General strings.
 $string['dontchange'] = 'Do not change anything';
@@ -317,31 +324,97 @@ $string['loginformpositionsetting_right'] = 'Right-aligned';
 // ... ... Setting: login form transparency.
 $string['loginformtransparencysetting'] = 'Login form transparency';
 $string['loginformtransparencysetting_desc'] = 'With this setting, you can make the login form slightly transparent to let the background image shine through even more.';
-// ... Section: Login providers.
-$string['loginprovidersheading'] = 'Login providers';
-$string['loginprovidersheading_desc'] = 'Please note: Boost Union has its own login providers settings and does not use the \'{$a->settingname}\' setting from <a href="{$a->url}">Moodle core\'s authentication setting</a>.';
-// ... ... Setting: Local login form.
-$string['loginlocalloginenablesetting'] = 'Local login';
-$string['loginlocalloginenablesetting_desc'] = 'With this setting, you control if the local login form is shown on the login page or not. By default, the local login form is shown and users can login into the site as normal. If you disable this setting, the local login form is hidden. This allows you to just provide login buttons for external identity providers like OAuth2 or OIDC.';
-$string['loginlocalloginenablesetting_note'] = 'Please note: As soon as you hide the local login form, you risk that admins cannot log in anymore with a local account if there is a problem with the external identity provider. The same goes if no other authentication methods than manual authentication are enabled at all.<br />To allow local logins anyway in such cases, the <a href="{$a->url}">side entrance local login page</a> (see below for details) is enabled automatically. Please bookmark this URL as your own safety net.';
-$string['loginlocalloginformhead'] = 'Local login';
-$string['loginlocalloginlocalnotdisabled'] = 'There is no need to log in on this side entrance login page here. Please use the <a href="{$a->url}">standard login page</a> for logging in.';
-// ... ... Setting: Local login intro.
-$string['loginlocalshowintrosetting'] = 'Local login intro';
-$string['loginlocalshowintrosetting_desc'] = 'With this setting, you control if a <em>\'{$a}\'</em> intro is shown above the local login form or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand which credentials to use in the local login form, especially if you provide more than one login method or if you have changed the order of the login methods.';
-$string['loginlocalintro'] = 'Login with your Moodle account';
-// ... ... Setting: IDP login intro.
-$string['loginidpshowintrosetting'] = 'IDP login intro';
-$string['loginidpshowintrosetting_desc'] = 'With this setting, you control if the <em>\'{$a}\'</em> intro is shown above the IDP login buttons or not. By default, the intro is shown and users will be quickly informed what the IDP buttons are about. If you disable this setting, the IDP intro is hidden. This allows you to provide a clean user login interface if you just use external identity providers like OAuth2 or OIDC.';
+// ... ... Setting: Login container width.
+$string['logincontainerwidthsetting'] = 'Login container width';
+$string['logincontainerwidthsetting_desc'] = 'With this setting, you can override Moodle\'s fixed login container width of 500px. By default, Moodle uses a login container width of 500px on medium and larger screens. You can enter other pixel-based values like 600px, but you can also enter a percentage-based value like 90% or a viewport-width value like 50vw.';
+$string['logincontainerwidthsetting_note'] = 'Please note: If you use the tabs login layout, the login container might become wider than the defined width if you have many login providers enabled or if you have long login tab texts. In this case, the login container will try to expand horizontally to fit all login provider tabs next to each other.';
+// ... Section: Login layout.
+$string['loginlayoutheading'] = 'Login layout';
+// ... ... Setting: Login layout.
+$string['loginlayoutsetting'] = 'Login layout';
+$string['loginlayoutsetting_desc'] = 'With this setting, you control how the login providers are displayed on the login page. You can choose between a vertical layout (all login providers displayed one below the other), a tabbed layout (login providers displayed in tabs next to each other), or an accordion layout (login providers displayed one below the other, but collapsed by default and expandable by clicking on the intro texts).';
+$string['loginlayoutvertical'] = 'Vertical (one below the other)';
+$string['loginlayouttabs'] = 'Tabs (next to each other)';
+$string['loginlayoutaccordion'] = 'Accordion (collapsed, expandable)';
 // ... Section: Login order.
 $string['loginorderheading'] = 'Login order';
-$string['loginorderheading_desc'] = 'With these settings, you control the order of the login methods in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login methods and login form elements which are disabled in Moodle.';
-$string['loginorderheading_note'] = 'Technical note: The presented order will be realized with CSS flexbox orders, not by rearranging the login widgets in the HTML DOM. This should be fine on all modern browsers but might not work on really old browsers.';
+$string['loginorderheading_desc'] = 'With these settings, you control the order of the login providers in the login form. The presented order will be defined from lowest to highest ordinal number, skipping all login providers and login form elements which are disabled in Boost Union.';
 // ... ... Settings: Login order.
 $string['loginorderlocalsetting'] = 'Local login';
 $string['loginorderidpsetting'] = 'IDP login';
 $string['loginorderfirsttimesignupsetting'] = 'Information for first time visitors & Self registration';
 $string['loginorderguestsetting'] = 'Guest login';
+// ... ... Setting: Primary login provider.
+$string['primaryloginsetting'] = 'Primary login provider';
+$string['primaryloginsetting_desc'] = 'With this setting, you can specify which login provider should be opened by default when the page loads. This setting only applies to the tabs layout and accordion layout. If set to "None", for the tabs layout the first login provider (based on the login order settings) will be opened by default. And for the accordion layout, no login provider will be opened by default.';
+// ... Section: Login provider: Local.
+$string['loginproviderlocalheading'] = 'Login provider: Local';
+// ... ... Setting: Local login.
+$string['loginlocalloginenablesetting'] = 'Local login';
+$string['loginlocalloginenablesetting_desc'] = 'With this setting, you control if the local login provider is shown on the login page or not. By default, the local login provider is shown and users can login into the site as normal. If you disable this setting, the local login provider is hidden. This allows you to just provide login buttons for external identity providers like OAuth2 or OIDC.';
+$string['loginlocalloginenablesetting_core'] = 'Moodle core setting interplay: Boost Union does not process the \'{$a->settingname}\' setting from <a href="{$a->url}">Moodle core\'s authentication setting</a>. This setting here is the only place to disable or enable the local login provider in Boost Union.';
+$string['loginlocalloginenablesetting_note'] = 'Please note: As soon as you hide the local login provider, you risk that admins cannot log in anymore with a local account if there is a problem with the external identity provider. The same goes if no other authentication methods than manual authentication are enabled at all.<br />To allow local logins anyway in such cases, the <a href="{$a->url}">side entrance local login page</a> (see below for details) is enabled automatically. Please bookmark this URL as your own safety net.';
+$string['loginlocalloginformhead'] = 'Local login';
+$string['loginlocalloginlocalnotdisabled'] = 'There is no need to log in on this side entrance login page here. Please use the <a href="{$a->url}">standard login page</a> for logging in.';
+// ... ... Setting: Local login intro.
+$string['loginlocalshowintrosetting'] = 'Local login intro';
+$string['loginlocalshowintrosetting_desc'] = 'With this setting, you control if an intro is shown above the local login form or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand which credentials to use in the local login form, especially if you provide more than one login provider or if you have changed the order of the login providers.';
+$string['loginlocalintro'] = 'Login with your Moodle account';
+// ... ... Setting: Local login intro text.
+$string['loginlocalintrotextsetting'] = 'Local login intro text';
+$string['loginlocalintrotextsetting_desc'] = 'With this setting, you can override the default intro text <em>\'{$a}\'</em> with a custom text. Leave this field empty to use the default text.';
+// ... ... Setting: Local login tab label.
+$string['loginlocalloginlabelsetting'] = 'Local login label';
+$string['loginlocalloginlabelsetting_desc'] = 'With this setting, you can customize the label for local login to be used in the tab and accordion layout.';
+$string['loginlocalloginlabelsetting_default'] = 'Moodle account';
+// ... Section: Login provider: IDP.
+$string['loginprovideridpheading'] = 'Login provider: IDP';
+// ... ... Setting: IDP login.
+$string['loginidploginenablesetting'] = 'IDP login';
+$string['loginidploginenablesetting_desc'] = 'With this setting, you control if the identity provider (IDP) login buttons are shown on the login page or not. By default, IDP login buttons are shown if identity providers are configured. If you disable this setting, all IDP login buttons are hidden regardless of the authentication plugins configuration.';
+$string['loginidploginenablesetting_core'] = 'Moodle core setting interplay: Identity provider login buttons are provided by authentication plugins like OAuth2, CAS or Shibboleth. You can manage authentication plugins on <a href="{$a->url}">Moodle core\'s authentication settings page</a>.';
+// ... ... Setting: IDP login intro.
+$string['loginidpshowintrosetting'] = 'IDP login intro';
+$string['loginidpshowintrosetting_desc'] = 'With this setting, you control if an intro is shown above the IDP login buttons or not. By default, the intro is shown and users will be quickly informed what the IDP buttons are about. If you disable this setting, the IDP intro is hidden. This allows you to provide a clean user login interface if you just use external identity providers like OAuth2 or OIDC.';
+// ... ... Setting: IDP login intro text.
+$string['loginidpintrotextsetting'] = 'IDP login intro text';
+$string['loginidpintrotextsetting_desc'] = 'With this setting, you can override the default intro text <em>\'{$a}\'</em> (which comes from the Moodle core language pack) with a custom text. Leave this field empty to use the default text.';
+// ... ... Setting: IDP login tab label.
+$string['loginidploginlabelsetting'] = 'IDP login label';
+$string['loginidploginlabelsetting_desc'] = 'With this setting, you can customize the label for IDP login to be used in the tab and accordion layout.';
+$string['loginidploginlabelsetting_default'] = 'IDP login';
+// ... Section: Login provider: Self registration.
+$string['loginproviderselfregistrationheading'] = 'Login provider: Self registration';
+// ... ... Setting: Self registration.
+$string['loginselfregistrationenablesetting'] = 'Self registration';
+$string['loginselfregistrationenablesetting_desc'] = 'With this setting, you control if the self registration button and signup link are shown on the login page or not. By default, self registration is shown if it is enabled in Moodle core. If you disable this setting, self registration is hidden regardless of the core registration setting.';
+$string['loginselfregistrationenablesetting_core'] = 'Moodle core setting interplay: Self registration is controlled by the \'{$a->settingname}\' setting which you can manage on <a href="{$a->url}">Moodle core\'s authentication settings page</a>.';
+// ... ... Setting: Self registration intro.
+$string['loginselfregistrationshowintrosetting'] = 'Self registration intro';
+$string['loginselfregistrationshowintrosetting_desc'] = 'With this setting, you control if an intro is shown above the self registration section or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand what self registration is about.';
+// ... ... Setting: Self registration intro text.
+$string['loginselfregistrationintrotextsetting'] = 'Self registration intro text';
+$string['loginselfregistrationintrotextsetting_desc'] = 'With this setting, you can override the default intro text <em>\'{$a}\'</em> (which comes from the Moodle core language pack) with a custom text. Leave this field empty to use the default text.';
+// ... ... Setting: Self registration tab label.
+$string['loginselfregistrationloginlabelsetting'] = 'Self registration label';
+$string['loginselfregistrationloginlabelsetting_desc'] = 'With this setting, you can customize the label for self registration to be used in the tab and accordion layout.';
+$string['loginselfregistrationloginlabelsetting_default'] = 'Self registration';
+// ... Section: Login provider: Guest.
+$string['loginproviderguestheading'] = 'Login provider: Guest';
+// ... ... Setting: Guest login.
+$string['loginguestloginenablesetting'] = 'Guest login';
+$string['loginguestloginenablesetting_desc'] = 'With this setting, you control if the guest login button is shown on the login page or not. By default, the guest login button is shown if guest access is enabled in Moodle core. If you disable this setting, the guest login button is hidden regardless of the core guest access setting.';
+$string['loginguestloginenablesetting_core'] = 'Moodle core setting interplay: Guest access is controlled by the \'{$a->settingname}\' setting which you can manage on <a href="{$a->url}">Moodle core\'s authentication settings page</a>.';
+// ... ... Setting: Guest login intro.
+$string['loginguestshowintrosetting'] = 'Guest login intro';
+$string['loginguestshowintrosetting_desc'] = 'With this setting, you control if an intro is shown above the guest login button or not. By default, the intro is not shown. But if you enable it, this intro may help users to understand what guest access is about.';
+// ... ... Setting: Guest login intro text.
+$string['loginguestintrotextsetting'] = 'Guest login intro text';
+$string['loginguestintrotextsetting_desc'] = 'With this setting, you can override the default intro text <em>\'{$a}\'</em> (which comes from the Moodle core language pack) with a custom text. Leave this field empty to use the default text.';
+// ... ... Setting: Guest login tab label.
+$string['loginguestloginlabelsetting'] = 'Guest login label';
+$string['loginguestloginlabelsetting_desc'] = 'With this setting, you can customize the label for guest login to be used in the tab and accordion layout.';
+$string['loginguestloginlabelsetting_default'] = 'Guest login';
 // ... Section: Side entrance login.
 $string['sideentranceloginheading'] = 'Side entrance login';
 // ... ... Setting: Endable side entrance login.
@@ -358,6 +431,16 @@ $string['courseoverviewshowcourseimagessetting_desc'] = 'With this setting, you 
 // ... ... Setting: Show course completion progress.
 $string['courseoverviewshowprogresssetting'] = 'Show course completion progress';
 $string['courseoverviewshowprogresssetting_desc'] = 'With this setting, you can control whether the course completion progress is visible inside the course overview block or not.';
+// ... Section: Course overview images.
+$string['courseoverviewimageheading'] = 'Course overview images';
+// ... ... Setting: Course overview image source.
+$string['courseoverviewimagesourcesetting'] = 'Course overview image source';
+$string['courseoverviewimagesourcesetting_desc'] = 'With this setting, you control the source of the image which is shown in the course overview block, on the category index pages and on the course list on site home. The main source for this image is the course image which is uploaded in the particular course\'s settings. If this image is not available, you can choose if you want to show a generated geometric pattern or a fallback course overview image.<br />Please note: If you use the geometric pattern, you can customize the pattern colors on the <a href="/admin/settings.php?section=coursecolors">course colors settings page</a>.';
+$string['courseoverviewimagesource_coursepluspattern'] = 'Course image with a fallback to a geometric pattern (unchanged as presented by Moodle core)';
+$string['courseoverviewimagesource_courseplusfallback'] = 'Course image with a fallback to the course overview fallback image';
+// ... ... Setting: Course overview fallback image.
+$string['courseoverviewimagefallback'] = 'Course overview fallback image';
+$string['courseoverviewimagefallback_desc'] = 'The image which you upload here will be used as a fallback course overview image as soon as the \'Course overview image source\' setting is configured likewise.<br />Please note: If you configure the \'Course overview image source\' setting to use the course overview fallback image, but you do not upload any image here, the geometric pattern will be used as a fallback anyway.';
 
 // Settings: Category index / site home tab.
 $string['categoryindextab'] = 'Category index / Site home';
@@ -388,9 +471,9 @@ $string['courselistinghowcategory_desc'] = 'With this setting, you control if th
 // ... ... Setting: Show course completion progress in the course listing.
 $string['courselistinghowprogress'] = 'Show course completion progress in the course listing';
 $string['courselistinghowprogress_desc'] = 'With this setting, you control if the course completion progress are shown in the course listing or not.';
-// ... ... Setting: Course completion progress style.
-$string['courseistingprogressstyle'] = 'Course completion progress style';
-$string['courseistingprogressstyle_desc'] = 'With this setting, you control how the course completion progress is displayed. You can choose between a simple percentage text or a progress bar.';
+// ... ... Setting: Course completion progress style in the course listing.
+$string['courseistingprogressstyle'] = 'Course completion progress style in the course listing';
+$string['courseistingprogressstyle_desc'] = 'With this setting, you control how the course completion progress is displayed in the course listing. You can choose between a simple percentage text or a progress bar.';
 $string['courseistingprogressstyle_percentage'] = 'Percentage text';
 $string['courseistingprogressstyle_bar'] = 'Progress bar';
 // ... ... Setting: Show course enrolment icons in the course listing.
@@ -431,21 +514,129 @@ $string['categorylistingpresentation_note'] = 'Please note: If you enabled the \
 // Settings: Course tab.
 $string['coursetab'] = 'Course';
 // ... Section: Course header.
-$string['courseheaderheading'] = 'Course Header';
-// ... ... Setting: Course header.
-$string['courseheaderimageenabled'] = 'Display the course image in the course header';
-$string['courseheaderimageenabled_desc'] = 'When enabled, the course image (which can be uploaded in a course\'s course settings) is displayed in the header of a course. The course images are shown there in addition to the \'My courses\' page where they are always shown.';
-$string['courseheaderimagefallback'] = 'Fallback course header image';
-$string['courseheaderimagefallback_desc'] = 'If you upload an image in this setting, it is used as fallback image and is displayed in the course header if no course image is uploaded in a particular course\'s course settings. If you do not upload an image here, a course header image is only shown in a particular course if a course image is uploaded in this particular course\'s course settings.';
-$string['courseheaderimageheight'] = 'Course header image height';
-$string['courseheaderimageheight_desc'] = 'With this setting, you control the height of the presented course header image.';
-$string['courseheaderimagelayout'] = 'Course header image layout';
-$string['courseheaderimagelayout_desc'] = 'With this setting, you control the layout of the course header image and the course title.';
-$string['courseheaderimagelayoutstackeddark'] = 'Course title stacked on course image (white font color for dark background images)';
-$string['courseheaderimagelayoutstackedlight'] = 'Course title stacked on course image (black font color for light background images)';
-$string['courseheaderimagelayoutheadingabove'] = 'Course title above of course image';
+$string['courseheaderheading'] = 'Course header';
+// ... ... Setting: Enable enhanced course header.
+$string['courseheaderenabled'] = 'Enable enhanced course header';
+$string['courseheaderenabled_desc'] = 'When enabled, the course header (which is just the course title in Moodle core) is enhanced by additional elements like the course image (which can be uploaded in a course\'s course settings) and other course metadata, depending how you configure the course header in detail.';
+$string['courseheaderenabled_help'] = 'When enabled, the course header is enhanced by additional elements like the course image and other course metadata, depending how you configure the course header in detail.';
+// ... ... Setting: Course header layout.
+$string['courseheaderlayout'] = 'Course header layout';
+$string['courseheaderlayout_desc'] = 'With this setting, you control the layout of the course header which shows the course title and the course metadata. You can choose between several pre-defined layouts. Some layouts feature a full surface course header image und some feature a partially covering course header image.';
+$string['courseheaderlayout_help'] = 'The layout of the course header which shows the course title and the course metadata.';
+$string['courseheaderlayoutstacked'] = 'Course title stacked on full surface course header image';
+$string['courseheaderlayoutheadingabove'] = 'Course title above of full surface course header image';
+// ... ... Setting: Course header image source.
+$string['courseheaderimagesource'] = 'Course header image source';
+$string['courseheaderimagesource_desc'] = 'Several course header layouts contain the presentation of a course header image. With this setting, you control the source of that course header image.';
+$string['courseheaderimagesource_explanation'] = 'Explanation of terms: <br /><ul><li><em>Course image</em>: The course image which can be uploaded in a particular course\'s course settings based on Moodle core functionality.</li><li><em>Global course header image</em>: The image which can be uploaded in the \'Global course header image\' setting below.</li><li><em>Dedicated course header image</em>: A dedicated course header image which can be uploaded in a particular course\'s course settings. As soon as you configure this setting to an option which contains a dedicated course header image, an additional file upload setting appears in each course\'s settings page. Additionally, to improve the structure of the course settings, it is combined with the Moodle Core \'Course image\' setting under a new \'Course images\' course settings section.</li></ul>';
+$string['courseheaderimagesource_courseplusglobal'] = 'Course image with a fallback to the global course header image';
+$string['courseheaderimagesource_coursenoglobal'] = 'Course image without fallback to the global course header image';
+$string['courseheaderimagesource_dedicatedplusfallback'] = 'Dedicated course header image with a fallback to the global course header image';
+$string['courseheaderimagesource_dedicatednofallback'] = 'Dedicated course header image without fallback to the global course header image';
+$string['courseheaderimagesource_dedicatedpluscourseplusfallback'] = 'Dedicated course header image with a fallback to the course image and then to the global course header image';
+$string['courseheaderimagesource_dedicatedpluscoursenofallback'] = 'Dedicated course header image with a fallback to the course image but without fallback to the global course header image';
+$string['courseheaderimagesource_global'] = 'Global course header image for all courses';
+$string['courseimagesheading'] = 'Course images';
+$string['courseheaderimage'] = 'Course header image';
+$string['courseheaderimageplusfallback'] = 'Course header image'; // This string is just there to make the help_icon class happy but is not used anywhere.
+$string['courseheaderimageplusfallback_help'] = 'The course header image is displayed in the course header at the top of the course page. If you do not upload an image here, a global course header image will be presented.';
+$string['courseheaderimagenofallback'] = 'Course header image'; // This string is just there to make the help_icon class happy but is not used anywhere.
+$string['courseheaderimagenofallback_help'] = 'The course header image is displayed in the course header at the top of the course page. If you do not upload an image here, the course header will just show the course title.';
+$string['courseheaderimagenoimage'] = 'Course header image'; // This string is just there to make the help_icon class happy but is not used anywhere.
+$string['courseheaderimagenoimage_help'] = 'The course header image is displayed in the course header at the top of the course page. If you do not upload an image here, the course header will show a plain background.';
+// ... ... Setting: Global course header image.
+$string['courseheaderimageglobal'] = 'Global course header image';
+$string['courseheaderimageglobal_desc'] = 'The image which you upload here is used as global course header image in the cascade which you configure in the \'Course header image source\' setting.';
+// ... ... Setting: Course header image requirement.
+$string['courseheaderimagerequirement'] = 'Course header image requirement';
+$string['courseheaderimagerequirement_desc'] = 'The course header layouts are primarily designed to show a course image and most enhanced course header layouts look inferior without the course header image. With this setting, you control if the enhanced course header is shown even if a course header image cannot be determined (because no image is uploaded in the course and no fallback image is configured) or if the standard Moodle course header should be shown. Please note that in the latter case, all additional course header elements like course contacts or course fields are not shown as well.';
+$string['courseheaderimagerequirement_standardonly'] = 'Show standard course header if no course image is determined';
+$string['courseheaderimagerequirement_enhancedwithoutimage'] = 'Show enhanced course header even if no course image is determined';
+// ... ... Setting: Course header height.
+$string['courseheaderheight'] = 'Course header height';
+$string['courseheaderheight_desc'] = 'With this setting, you control the height of the presented course header.';
+$string['courseheaderheight_help'] = 'The height of the presented course header.';
+// ... ... Setting: Course header canvas border.
+$string['courseheadercanvasborder'] = 'Course header canvas border';
+$string['courseheadercanvasborder_desc'] = 'With this setting, you control the border of the course header canvas.';
+$string['courseheadercanvasborder_none'] = 'No border';
+$string['courseheadercanvasborder_grey'] = 'Grey border';
+$string['courseheadercanvasborder_brandcolor'] = 'Brand-color border';
+$string['courseheadercanvasborder_help'] = 'The style of the course header canvas border.';
+// ... ... Setting: Course header canvas background.
+$string['courseheadercanvasbackground'] = 'Course header canvas background';
+$string['courseheadercanvasbackground_desc'] = 'With this setting, you control the background of the course header canvas.';
+$string['courseheadercanvasbackground_transparent'] = 'Transparent';
+$string['courseheadercanvasbackground_white'] = 'White';
+$string['courseheadercanvasbackground_lightgrey'] = 'Light grey';
+$string['courseheadercanvasbackground_lightbrandcolor'] = 'Light brand color';
+$string['courseheadercanvasbackground_brandcolorgradientlight'] = 'Light brand color gradient';
+$string['courseheadercanvasbackground_brandcolorgradientfull'] = 'Full brand color gradient';
+$string['courseheadercanvasbackground_help'] = 'The background color of the course header canvas.';
+// ... ... Setting: Course header text on image style.
+$string['courseheadertextonimagestyle'] = 'Course header text on image style';
+$string['courseheadertextonimagestyle_desc'] = 'With this setting, you control the text style of the elements which are located on top of the course header image.';
+$string['courseheadertextonimagestyle_help'] = 'The text style of the elements which are located on top of the course header image.';
+$string['courseheadertextonimagestyle_light'] = 'Light (light font color for dark background images)';
+$string['courseheadertextonimagestyle_lightshadow'] = 'Light & Shadow (light font color with a dark shadow for dark background images)';
+$string['courseheadertextonimagestyle_lightbg'] = 'Light & Background (light font color with a semi-transparent background for dark background images)';
+$string['courseheadertextonimagestyle_dark'] = 'Dark (dark font color for light background images)';
+$string['courseheadertextonimagestyle_darkshadow'] = 'Dark & Shadow (dark font color with a light shadow for light background images)';
+$string['courseheadertextonimagestyle_darkbg'] = 'Dark & Background (dark font color with a semi-transparent background for light background images)';
+// ... ... Setting: Course header image position.
 $string['courseheaderimageposition'] = 'Course header image position';
 $string['courseheaderimageposition_desc'] = 'With this setting, you control the positioning of the course header image within the course header image container. The first value is the horizontal position, the second value is the vertical position.';
+$string['courseheaderimageposition_help'] = 'The positioning of the course header image within the course header image container. The first value is the horizontal position, the second value is the vertical position.';
+// ... ... Setting: Show course contacts in the course header.
+$string['courseheadershowcontacts'] = 'Show course contacts in the course header';
+$string['courseheadershowcontacts_desc'] = 'With this setting, you can enable the display of course contacts in the course header.';
+// ... ... Setting: Show course shortname in the course header.
+$string['courseheadershowshortname'] = 'Show course shortname in the course header';
+$string['courseheadershowshortname_desc'] = 'With this setting, you can enable the display of the course shortname in the course header.';
+// ... ... Setting: Show course category in the course header.
+$string['courseheadershowcategory'] = 'Show course category in the course header';
+$string['courseheadershowcategory_desc'] = 'With this setting, you can enable the display of the course category in the course header.';
+// ... ... Setting: Show course completion progress in the course header.
+$string['courseheadershowprogress'] = 'Show course completion progress in the course header';
+$string['courseheadershowprogress_desc'] = 'With this setting, you can enable the display of the course completion progress in the course header.';
+// ... ... Setting: Course completion progress style in the course header.
+$string['courseheaderprogressstyle'] = 'Course completion progress style in the course header';
+$string['courseheaderprogressstyle_desc'] = 'With this setting, you control how the course completion progress is displayed in the course header. You can choose between a simple percentage text or a progress bar.';
+$string['aria:courseprogress'] = 'Course progress:';
+$string['completepercent'] = '{$a}% complete';
+// ... ... Setting: Show course fields in the course header.
+$string['courseheadershowfields'] = 'Show course fields in the course header';
+$string['courseheadershowfields_desc'] = 'With this setting, you can enable the display of course fields in the course header.';
+// ... ... Setting: Select course fields to be shown in the course header.
+$string['courseheaderselectfields'] = 'Select course fields to be shown in the course header';
+$string['courseheaderselectfields_desc'] = 'With this setting, you can select which specific custom course fields are shown in the course header. If none are selected, no fields will be shown.';
+$string['courseheaderselectfields_nofield'] = 'With this setting, you can select which specific custom course fields are shown in the course header. There isn\'t any usable custom course field yet. Please go the <a href="{$a->url}">{$a->linktitle}</a> and create a custom course field first.';
+// ... ... Setting: Style course fields in the course header.
+$string['courseheaderstylefields'] = 'Style course fields in the course header';
+$string['courseheaderstylefields_desc'] = 'With this setting, you can control how the custom course fields are displayed in the course header. You can choose between showing them as text (showing the field value together with the field name as label) or as badge (showing just the field value).';
+// ... ... Setting: Show details popup in the course header.
+$string['courseheadershowpopup'] = 'Show details popup in the course header';
+$string['courseheadershowpopup_desc'] = 'With this setting, you can enable the display of the course summary in the course header.';
+$string['courseheadershowpopup_label'] = 'Course details';
+// ... ... Setting: Show edit icon in the course header.
+$string['courseheadershowediticon'] = 'Show edit icon in the course header';
+$string['courseheadershowediticon_desc'] = 'With this setting, you can enable the display of an edit icon in the course header when edit mode is turned on. This icon helps teachers to easily find and access the course header settings. Please note that showing this edit icon only makes sense of you have enabled any course override at the same time or if your course header image source is set to use the course image. You have to decide yourself, Boost Union does not check this for you.';
+$string['courseheadershowediticon_label'] = 'Edit course header settings';
+// ... ... Setting: Course header layouts exclusion list.
+$string['courseheaderlayoutexclusionlist'] = 'Course header layouts exclusion list';
+$string['courseheaderlayoutexclusionlist_desc'] = 'With this setting, you can exclude particular course header layouts from being available for course-specific overrides. The selected layouts will not appear in the course settings for teachers to choose from, but the administrator can still use them globally. This allows you to restrict which layouts are available to course editors while maintaining administrative control over the global setting. Please note that the course header layout which is selected by the admin above will never be excluded from the course settings, even if you tick it here.';
+// ... ... Setting: Course format exclusion list.
+$string['courseheaderformatexclusionlist'] = 'Course format exclusion list';
+$string['courseheaderformatexclusionlist_desc'] = 'With this setting, you can exclude particular course formats from the course header feature. For courses using the selected course formats, the course header will not be modified regardless of the other course header settings. This allows you to exclude course formats which do not work well with the course header feature or which have their own course header implementation.';
+// ... ... Setting: Transfer course-specific header settings during course import.
+$string['courseheaderimporttransfer'] = 'Transfer course-specific header settings during course import';
+$string['courseheaderimporttransfer_desc'] = 'With this setting, you can control whether course header settings and the course header image which have been set within a particular course\'s settings are transferred to another course within a course import. If set to "Always", all course header settings will be copied from the source course to the destination course, regardless if the teacher imports a whole course or just a fraction of a course. If set to "Never", course header settings will not be transferred. If set to "Controlled by capability", the transfer depends on whether the user performing the import has the capability "theme/boost_union:transfercourseheaderduringimport" in the destination course. However, allowing the teacher to decide this question on a per-case basis during the import process is not possible due to technical limitations of Moodle core.';
+$string['courseheaderrestoreoption'] = 'Include course header settings';
+// ... Section: Breadcrumbs.
+$string['breadcrumbsheading'] = 'Breadcrumbs';
+// ... ... Setting: Course category breadcrumb.
+$string['categorybreadcrumbs'] = 'Display the category breadcrumbs in the course header';
+$string['categorybreadcrumbs_desc'] = 'By default, the course category breadcrumbs are not shown on course pages in the course header. With this setting, you can show the course category breadcrumbs in the course header above the course name.';
 // ... Section: Course index.
 $string['courseindexheading'] = 'Course Index';
 // ... ... Setting: Course index.
@@ -604,11 +795,6 @@ $string['shownavbarstarredcourses_label'] = 'Starred courses';
 // ... ... Setting: Starred courses popover cog icon link target.
 $string['starredcourseslinktargetsetting'] = 'Starred courses popover cog icon link target';
 $string['starredcourseslinktargetsetting_desc'] = 'With this setting, you can set the link target of the cog icon in the starred courses popover. By default, the cog icon links to the \'My courses\' page. However, you can also link to the \'Dashboard\' page, especially if you have disabled the \'My courses\' page in the primary navigation.';
-// ... Section: Breadcrumbs.
-$string['breadcrumbsheading'] = 'Breadcrumbs';
-// ... ... Setting: Course category breadcrumb.
-$string['categorybreadcrumbs'] = 'Display the category breadcrumbs in the course header';
-$string['categorybreadcrumbs_desc'] = 'By default, the course category breadcrumbs are not shown on course pages in the course header. With this setting, you can show the course category breadcrumbs in the course header above the course name.';
 // ... Section: Navigation.
 $string['navigationheading'] = 'Navigation';
 // ... ... Setting: Back to top button.
@@ -1015,7 +1201,7 @@ $string['infobannerpagessetting_desc'] = 'With this setting, you can select the 
 $string['infobannerbsclasssetting'] = 'Info banner {$a->no} Bootstrap class';
 $string['infobannerbsclasssetting_desc'] = 'With this setting, you can select the Bootstrap style with which info banner {$a->no} should be displayed. If you choose the \'No Bootstrap color\' option, the info banner will be output without any particular Bootstrap color which gives you the freedom to style the banner yourself within the rich-text editor.';
 $string['infobannerordersetting'] = 'Info banner {$a->no} order position';
-$string['infobannerordersetting_desc'] = 'With this setting, you define the order position of info banner {$a->no}. By default, the info banners are ordered from top to bottom like you see them on this settings page here. However, you can decide to assign another order position with this setting. If you assign the same order position to two or more information banners, they will be ordered again according to the order on this settings page.';
+$string['infobannerordersetting_desc'] = 'With this setting, you define the order position of info banner {$a->no}. By default, the info banners are ordered from top to bottom like you see them on this settings page here. However, you can decide to assign another order position with this setting. If you assign the same order position to two or more information banners, they will be ordered again according to the order on this settings page. If you place information banners above and below the page header on the same page, they will be ordered separately in these two areas according to the order position.';
 $string['infobannermodesetting'] = 'Info banner {$a->no} display mode';
 $string['infobannermodesetting_desc'] = 'With this setting, you can define if info banner {$a->no} should be a perpetual banner (which is always shown) or a time controlled banner (which is only shown within the configured time interval)';
 $string['infobannerdismissiblesetting'] = 'Info banner {$a->no} dismissible';
@@ -1024,6 +1210,10 @@ $string['infobannerstartsetting'] = 'Info banner {$a->no} start time';
 $string['infobannerstartsetting_desc'] = 'With this setting, you can define from when on info banner {$a->no} should be displayed. The configured time is interpreted as server time, not as user time.';
 $string['infobannerendsetting'] = 'Info banner {$a->no} end time';
 $string['infobannerendsetting_desc'] = 'With this setting, you can define until when info banner {$a->no} should be displayed. The configured time is interpreted as server time, not as user time.';
+$string['infobannerpositionsetting'] = 'Info banner {$a->no} position in relation to page header';
+$string['infobannerpositionsetting_desc'] = 'With this setting, you can define where info banner {$a->no} should be displayed in relation to the page header / heading. By default, the info banner is shown above the page header. However, you can choose to display it below the page header instead. On the login page, this setting has no effect as there is no page header.';
+$string['infobannerpositionabove'] = 'Above the page header';
+$string['infobannerpositionbelow'] = 'Below the page header';
 // Settings: Advertisement tiles tab.
 $string['tilestab'] = 'Advertisement tiles';
 // ... Section: Advertisement tiles general.
@@ -1074,6 +1264,10 @@ $string['slideranimationsetting'] = 'Slider animation type';
 $string['slideranimationsetting_desc'] = 'With this setting, you control the slider animation. \'Slide\' applies a sliding animation and \'Fade\' applies a fading animation.';
 $string['slideranimationsetting_fade'] = 'Fade';
 $string['slideranimationsetting_slide'] = 'Slide';
+$string['slidervariantsetting'] = 'Slider variant';
+$string['slidervariantsetting_desc'] = 'With this setting, you can control the variant of the slider. The light variant uses light colors for the controls, indicators, and captions (for dark backgrounds), while the dark variant uses dark colors for these elements (for light backgrounds).';
+$string['slidervariantsetting_dark'] = 'Dark variant (for light backgrounds)';
+$string['slidervariantsetting_light'] = 'Light variant (for dark backgrounds)';
 $string['sliderarrownavsetting'] = 'Enable arrow navigation';
 $string['sliderarrownavsetting_desc'] = 'With this setting, you can add navigation arrows on both sides of the slider.';
 $string['sliderfrontpagepositionsetting'] = 'Position of the slider on site home';
@@ -1110,9 +1304,10 @@ $string['slidecontentsetting_desc'] = 'Here, you enter the content which should 
 $string['slidecontentstylesetting'] = 'Slide {$a->no} content style';
 $string['slidecontentstylesetting_dark'] = 'Dark (black font color for light background images)';
 $string['slidecontentstylesetting_darkshadow'] = 'Dark & Shadow (black font color with a light shadow for light background images)';
-$string['slidecontentstylesetting_desc'] = 'Here, you can modify the style of the content of slide {$a->no}. By default, the content style is a white font color for dark background images. However, to allow consistent and easy styling on all kinds of background images, you can override the style here. Please note that this setting will overrrule the font color which you set in the rich-text editor above in any case.';
+$string['slidecontentstylesetting_desc'] = 'Here, you can modify the style of the content of slide {$a->no}. By default, the content style is controlled by the configured slider variant and can just be overruled by setting a font color in the rich-text editor. However, to allow consistent and easy styling on particular background images, you can override the content style here as well.';
 $string['slidecontentstylesetting_light'] = 'Light (white font color for dark background images)';
 $string['slidecontentstylesetting_lightshadow'] = 'Light & Shadow (white font color with a dark shadow for dark background images)';
+$string['slidecontentstylesetting_nochange'] = 'Controlled by slider variant';
 $string['slideenabledsetting'] = 'Enable slide {$a->no}';
 $string['slideenabledsetting_desc'] = 'With this setting, you can enable slide {$a->no}.';
 $string['slidelinksetting'] = 'Slide {$a->no} link URL';
@@ -1130,6 +1325,8 @@ $string['slidelinktargetsetting_samewindow'] = 'Same window';
 $string['slidelinktargetsetting_newtab'] = 'New tab';
 $string['slideordersetting'] = 'Slide {$a->no} order position';
 $string['slideordersetting_desc'] = 'With this setting, you define the order position of the slide {$a->no}. By default, the slides are ordered as you see them on this settings page here. However, you can decide to assign another order position with this setting. If you assign the same order position to two or more slides, they will be ordered again according to the order on this settings page.';
+$string['slideintervalsetting'] = 'Slide {$a->no} individual interval';
+$string['slideintervalsetting_desc'] = 'With this setting, you can set an individual interval for slide {$a->no} in milliseconds. This will override the global slider interval setting for this particular slide. If you leave this empty, the slide will use the global interval setting.';
 
 // Settings: Functionality page.
 $string['configtitlefunctionality'] = 'Functionality';
@@ -1656,6 +1853,8 @@ $string['boost_union:viewregionoffcanvasright'] = 'To be able to see the Off-can
 $string['boost_union:editregionoffcanvasright'] = 'To be able to edit the Off-canvas (right) block region';
 $string['boost_union:viewregionoffcanvascenter'] = 'To be able to see the Off-canvas (center) block region';
 $string['boost_union:editregionoffcanvascenter'] = 'To be able to edit the Off-canvas (center) block region';
+$string['boost_union:overridecourseheaderincourse'] = 'To be able to override the course header settings in a course';
+$string['boost_union:transfercourseheaderduringimport'] = 'Transfer course header settings during course import';
 
 // Caches.
 $string['cachedef_flavours'] = 'Flavours which apply to a given page\'s category ID for the current user';
@@ -1664,6 +1863,7 @@ $string['cachedef_smartmenu_items'] = 'Smart menu items';
 $string['cachedef_touchiconsios'] = 'Touch icon files for iOS';
 $string['cachedef_hooksuppress'] = 'Hook suppressions';
 $string['cachedef_fontawesomeicons'] = 'FontAwesome icon map';
+$string['cachedef_courseoverrides'] = 'Course-specific setting overrides';
 
 // Scheduled tasks.
 $string['task_purgecache'] = 'Purge theme cache';
